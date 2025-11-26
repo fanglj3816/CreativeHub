@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: user-post-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+
+server:
+  port: 0  # 随机端口，后续自行调整
