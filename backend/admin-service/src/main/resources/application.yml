@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: admin-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        enabled: true
+        register-enabled: true
+        metadata:
+          version: 1.0.0
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        file-extension: yml
+        enabled: false
+        import-check:
+          enabled: false
+
+server:
+  port: 0  # 随机端口，由 Nacos 自动分配
+
