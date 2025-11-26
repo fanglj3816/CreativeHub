@@ -57,22 +57,7 @@ spring:
           filters:
             - StripPrefix=1
       
-      # 全局跨域配置
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            # Spring Boot 3 要求：当 allow-credentials 为 true 时不能使用 allowed-origins="*"
-            # 使用 allowed-origin-patterns 来支持任意来源
-            allowed-origin-patterns: "*"
-            allowed-methods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowed-headers: "*"
-            allow-credentials: true
-            max-age: 3600
+      # CORS 配置已通过 CorsConfig 类处理
 
 # Actuator 配置
 management:
