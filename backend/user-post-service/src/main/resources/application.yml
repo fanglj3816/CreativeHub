@@ -1,7 +1,25 @@
 spring:
   application:
     name: user-post-service
+  datasource:
+    url: ${POST_DB_URL:jdbc:mysql://localhost:3306/creativehub_user?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true}
+    username: ${POST_DB_USERNAME:root}
+    password: ${POST_DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   cloud:
+    openfeign:
+      client:
+        config:
+          media-service:
+            connect-timeout: 2000
+            read-timeout: 5000
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
@@ -22,3 +40,10 @@ spring:
 
 server:
   port: 0  # 随机端口，由 Nacos 自动分配
+
+feign:
+  okhttp:
+    enabled: true
+
+media-service:
+  base-url: ${MEDIA_SERVICE_BASE_URL:http://media-service}
