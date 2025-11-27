@@ -1,28 +1,48 @@
-.home-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+@import '../styles/theme.css';
+
+.home-page {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.home-card {
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
+.feed-header {
+  margin-bottom: var(--spacing-xl);
   text-align: center;
+  padding: var(--spacing-lg) 0;
 }
 
-.home-card h1 {
-  color: #1890ff;
-  margin-bottom: 16px;
+.feed-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.home-card p {
+.feed-subtitle {
   font-size: 16px;
-  color: #666;
+  color: var(--text-tertiary);
 }
 
+.feed-container {
+  display: flex;
+  flex-direction: column;
+}
 
+/* 响应式 */
+@media (max-width: 768px) {
+  .home-page {
+    max-width: 100%;
+  }
+  
+  .feed-title {
+    font-size: 24px;
+  }
+  
+  .feed-subtitle {
+    font-size: 14px;
+  }
+}

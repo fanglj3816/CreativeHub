@@ -28,6 +28,130 @@
   overflow: hidden;
 }
 
+/* 装饰区域 */
+.auth-decoration {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  padding: 60px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s ease;
+  background: linear-gradient(135deg, rgba(15, 52, 96, 0.6) 0%, rgba(22, 33, 62, 0.7) 100%);
+  border-radius: 8px;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.auth-decoration::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.auth-decoration.decoration-right {
+  right: 0;
+}
+
+.auth-decoration.decoration-left {
+  left: 0;
+}
+
+/* 切换动画 - 装饰区域 */
+.auth-box.login-active .auth-decoration.decoration-right {
+  transform: translateX(0);
+}
+
+.auth-box.login-active .auth-decoration.decoration-left {
+  transform: translateX(-100%);
+}
+
+.auth-box.register-active .auth-decoration.decoration-right {
+  transform: translateX(100%);
+}
+
+.auth-box.register-active .auth-decoration.decoration-left {
+  transform: translateX(0);
+}
+
+.decoration-content {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.decoration-title {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+}
+
+.decoration-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.decoration-illustration {
+  width: 100%;
+  height: 250px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.decoration-features {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 32px;
+  opacity: 0.9;
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.feature-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
 /* 登录表单 */
 .login-form {
   position: absolute;
@@ -40,6 +164,7 @@
   align-items: center;
   transition: transform 0.6s ease;
   background: #16213e;
+  z-index: 2;
 }
 
 /* 注册表单 */
@@ -54,9 +179,10 @@
   align-items: center;
   transition: transform 0.6s ease;
   background: #16213e;
+  z-index: 2;
 }
 
-/* 切换动画 */
+/* 切换动画 - 表单 */
 .auth-box.login-active .login-form {
   transform: translateX(0);
 }
@@ -90,6 +216,11 @@
   position: relative;
   width: 100%;
   margin-bottom: 30px;
+}
+
+/* 有错误时减少输入框底部间距，错误提示会在文档流中显示 */
+.ant-form-item-has-error .input-wrapper {
+  margin-bottom: 8px;
 }
 
 /* 输入框样式 - 下划线样式，背景透明 */
@@ -132,7 +263,7 @@
   top: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #fff !important;
   pointer-events: none;
   transition: all 0.3s ease;
   z-index: 1;
@@ -143,7 +274,31 @@
   top: -20px;
   font-size: 12px;
   font-weight: 400;
-  color: #00d4ff;
+  color: #00d4ff !important;
+}
+
+/* 确保密码输入框的标签初始状态正确 */
+.input-wrapper:not(.focused) .input-label {
+  top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff !important;
+}
+
+/* 密码输入框特殊处理 - 确保标签初始状态 */
+.input-wrapper:not(.focused):has(.ant-input-password) .input-label {
+  top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff !important;
+}
+
+/* 密码输入框聚焦或有值时 */
+.input-wrapper.focused:has(.ant-input-password) .input-label {
+  top: -20px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #00d4ff !important;
 }
 
 /* 密码输入框特殊处理 */
@@ -307,16 +462,39 @@
 /* 表单项样式 */
 .ant-form-item {
   margin-bottom: 0;
+  position: relative;
 }
 
+/* 表单项控制区域 */
+.ant-form-item-control {
+  position: relative;
+}
+
+/* 确保错误提示不会与下一个表单项重叠 - 使用相对定位 */
+.ant-form-item-has-error {
+  margin-bottom: 24px;
+  padding-bottom: 0;
+}
+
+/* 错误提示容器 - 使用相对定位在文档流中 */
+.ant-form-item-has-error .ant-form-item-explain {
+  position: relative;
+  margin-top: 6px;
+  margin-bottom: 0;
+  padding: 0;
+  z-index: 1;
+  pointer-events: none;
+  min-height: 18px;
+}
+
+/* 错误提示文本样式 */
 .ant-form-item-explain-error {
   font-size: 12px;
   color: #ff6b6b;
-  margin-top: 5px;
   line-height: 1.5;
-  position: absolute;
-  top: 100%;
-  left: 0;
+  margin: 0;
+  padding: 0;
+  display: block;
 }
 
 .ant-form-item-has-error .form-input {
@@ -345,6 +523,10 @@
     min-height: 600px;
   }
 
+  .auth-decoration {
+    display: none;
+  }
+
   .login-form,
   .register-form {
     width: 100%;
@@ -367,6 +549,10 @@
     padding: 20px;
   }
 
+  .auth-decoration {
+    display: none;
+  }
+
   .login-form,
   .register-form {
     padding: 30px 20px;
@@ -375,5 +561,21 @@
   .form-title {
     font-size: 24px;
     margin-bottom: 30px;
+  }
+
+  .decoration-title {
+    font-size: 28px;
+  }
+
+  .decoration-subtitle {
+    font-size: 14px;
+  }
+
+  .decoration-illustration {
+    height: 200px;
+  }
+
+  .decoration-features {
+    gap: 20px;
   }
 }

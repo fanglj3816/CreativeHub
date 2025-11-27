@@ -19,6 +19,15 @@ public class RegisterRequest {
     @Size(max = 50, message = "昵称长度不能超过50个字符")
     private String nickname;
 
+    @Size(max = 6, message = "省份代码长度不能超过6个字符")
+    private String provinceCode; // 省份代码
+
+    @Size(max = 6, message = "城市代码长度不能超过6个字符")
+    private String cityCode; // 城市代码
+
+    @Size(max = 6, message = "区县代码长度不能超过6个字符")
+    private String districtCode; // 区县代码
+
     @Valid
     private AddressDto address;
 
@@ -53,6 +62,30 @@ public class RegisterRequest {
 
     public void setAddress(AddressDto address) {
         this.address = address;
+    }
+
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getDistrictCode() {
+        return districtCode;
+    }
+
+    public void setDistrictCode(String districtCode) {
+        this.districtCode = districtCode;
     }
 }
 

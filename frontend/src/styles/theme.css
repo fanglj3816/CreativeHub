@@ -1,0 +1,198 @@
+/* CreativeHub 主题样式 - 与登录页风格统一 */
+
+:root {
+  /* 颜色系统 */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: rgba(22, 33, 62, 0.8);
+  --bg-card-hover: rgba(22, 33, 62, 0.95);
+  --bg-overlay: rgba(15, 52, 96, 0.6);
+  
+  /* 边框和光效 */
+  --border-color: rgba(255, 255, 255, 0.15);
+  --border-color-hover: rgba(0, 212, 255, 0.5);
+  --glow-color: rgba(0, 212, 255, 0.3);
+  
+  /* 文字颜色 */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+  --text-accent: #00d4ff;
+  
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+  
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* 间距 */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* 过渡 */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.6s ease;
+}
+
+/* 通用卡片样式 */
+.card-base {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  backdrop-filter: blur(10px);
+}
+
+.card-base:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color-hover);
+  box-shadow: var(--shadow-lg), 0 0 20px var(--glow-color);
+  transform: translateY(-2px);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background: var(--bg-overlay);
+  border: 1px solid var(--text-accent);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-accent);
+  color: var(--text-accent);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+/* 输入框样式 */
+.input-base {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 10px 16px;
+  transition: all var(--transition-base);
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: var(--text-accent);
+  box-shadow: 0 0 10px var(--glow-color);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 图标样式 */
+.icon-line-art {
+  stroke: var(--text-secondary);
+  fill: none;
+  stroke-width: 1.5;
+  transition: stroke var(--transition-base);
+}
+
+.icon-line-art:hover {
+  stroke: var(--text-accent);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-accent);
+}
+
+/* 文本样式 */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+
+.text-accent {
+  color: var(--text-accent);
+}
+
+/* 布局工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+

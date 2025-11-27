@@ -36,7 +36,7 @@ public class UserAddress {
     @Column(length = 50)
     private String district;
 
-    @Column(name = "detail_address", nullable = false, length = 255)
+    @Column(name = "detail_address", nullable = false, length = 200)
     private String detailAddress;
 
     @Column(name = "postal_code", length = 20)

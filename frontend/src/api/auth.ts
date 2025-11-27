@@ -64,6 +64,9 @@ export interface RegisterRequest {
   email: string;
   password: string;
   nickname: string;
+  provinceCode?: string;
+  cityCode?: string;
+  districtCode?: string;
 }
 
 export interface RegisterResponse {
@@ -76,4 +79,7 @@ export const register = async (data: RegisterRequest): Promise<RegisterResponse>
   const response = await api.post<RegisterResponse>('/api/auth/register', data);
   return response.data;
 };
+
+// 导出 api 实例供其他模块使用
+export default api;
 

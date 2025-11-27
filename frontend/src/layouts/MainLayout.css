@@ -1,0 +1,58 @@
+@import '../styles/theme.css';
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.main-content {
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+  .main-layout {
+    grid-template-columns: 260px 1fr 300px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-layout {
+    grid-template-columns: 240px 1fr 280px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 220px 1fr;
+  }
+  
+  .main-layout > :last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .main-layout > :first-child {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 1000;
+    transition: left var(--transition-base);
+  }
+  
+  .main-layout > :first-child.mobile-open {
+    left: 0;
+  }
+}
+

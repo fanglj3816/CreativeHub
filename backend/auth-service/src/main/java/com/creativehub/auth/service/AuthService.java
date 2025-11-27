@@ -4,9 +4,11 @@ import com.creativehub.auth.dto.AddressDto;
 import com.creativehub.auth.dto.LoginRequest;
 import com.creativehub.auth.dto.LoginResponse;
 import com.creativehub.auth.dto.RegisterRequest;
+import com.creativehub.auth.entity.ChinaArea;
 import com.creativehub.auth.entity.UserAccount;
 import com.creativehub.auth.entity.UserAddress;
 import com.creativehub.auth.entity.UserProfile;
+import com.creativehub.auth.repository.ChinaAreaRepository;
 import com.creativehub.auth.repository.UserAccountRepository;
 import com.creativehub.auth.repository.UserAddressRepository;
 import com.creativehub.auth.repository.UserProfileRepository;
@@ -14,6 +16,7 @@ import com.creativehub.auth.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -25,18 +28,21 @@ public class AuthService {
     private final UserAddressRepository userAddressRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ChinaAreaRepository chinaAreaRepository;
 
     public AuthService(
             UserAccountRepository userAccountRepository,
             UserProfileRepository userProfileRepository,
             UserAddressRepository userAddressRepository,
             PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider) {
+            JwtTokenProvider jwtTokenProvider,
+            ChinaAreaRepository chinaAreaRepository) {
         this.userAccountRepository = userAccountRepository;
         this.userProfileRepository = userProfileRepository;
         this.userAddressRepository = userAddressRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.chinaAreaRepository = chinaAreaRepository;
     }
 
     @Transactional
@@ -62,11 +68,24 @@ public class AuthService {
         userProfile.setNickname(request.getNickname());
         userProfileRepository.save(userProfile);
 
-        // 如果提供了地址，创建 UserAddress
-        if (request.getAddress() != null) {
-            AddressDto addressDto = request.getAddress();
-            UserAddress userAddress = new UserAddress();
-            userAddress.setUserId(userAccount.getId());
+        // 创建默认地址信息
+        createInitialAddress(userAccount, request);
+    }
+
+    private void createInitialAddress(UserAccount userAccount, RegisterRequest request) {
+        AddressDto addressDto = request.getAddress();
+        boolean hasRegionCode = StringUtils.hasText(request.getProvinceCode())
+                || StringUtils.hasText(request.getCityCode())
+                || StringUtils.hasText(request.getDistrictCode());
+
+        if (addressDto == null && !hasRegionCode) {
+            return;
+        }
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setUserId(userAccount.getId());
+
+        if (addressDto != null) {
             userAddress.setReceiverName(addressDto.getReceiverName());
             userAddress.setReceiverPhone(addressDto.getReceiverPhone());
             userAddress.setCountry(addressDto.getCountry());
@@ -75,9 +94,41 @@ public class AuthService {
             userAddress.setDistrict(addressDto.getDistrict());
             userAddress.setDetailAddress(addressDto.getDetailAddress());
             userAddress.setPostalCode(addressDto.getPostalCode());
-            userAddress.setIsDefault(1); // 设为默认地址
-            userAddressRepository.save(userAddress);
+        } else {
+            userAddress.setReceiverName(StringUtils.hasText(request.getNickname()) ? request.getNickname() : "未填写");
+            userAddress.setReceiverPhone("未填写");
+            userAddress.setDetailAddress("请完善详细地址");
         }
+
+        applyRegionInfo(userAddress, request);
+        userAddress.setIsDefault(1);
+        userAddressRepository.save(userAddress);
+    }
+
+    private void applyRegionInfo(UserAddress userAddress, RegisterRequest request) {
+        if (!StringUtils.hasText(userAddress.getCountry())) {
+            userAddress.setCountry("中国");
+        }
+
+        if (!StringUtils.hasText(userAddress.getProvince())) {
+            resolveAreaName(request.getProvinceCode())
+                    .ifPresent(userAddress::setProvince);
+        }
+        if (!StringUtils.hasText(userAddress.getCity())) {
+            resolveAreaName(request.getCityCode())
+                    .ifPresent(userAddress::setCity);
+        }
+        if (!StringUtils.hasText(userAddress.getDistrict())) {
+            resolveAreaName(request.getDistrictCode())
+                    .ifPresent(userAddress::setDistrict);
+        }
+    }
+
+    private java.util.Optional<String> resolveAreaName(String areaCode) {
+        if (!StringUtils.hasText(areaCode)) {
+            return java.util.Optional.empty();
+        }
+        return chinaAreaRepository.findById(areaCode).map(ChinaArea::getName);
     }
 
     public LoginResponse login(LoginRequest request) {

@@ -1,0 +1,57 @@
+/* Ant Design 深色主题覆盖 - 全局样式 */
+
+/* Select 下拉菜单全局样式 - 使用更高优先级 */
+:global(.ant-select-dropdown) {
+  background: #16213e !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(.ant-select-item) {
+  color: #fff !important;
+  background: transparent !important;
+  transition: all 0.3s ease !important;
+}
+
+:global(.ant-select-item:hover) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+:global(.ant-select-item-option-selected) {
+  background: rgba(0, 212, 255, 0.2) !important;
+  color: #00d4ff !important;
+  font-weight: 500 !important;
+}
+
+:global(.ant-select-item-option-selected:hover) {
+  background: rgba(0, 212, 255, 0.3) !important;
+}
+
+:global(.ant-select-item-option-active) {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 空状态 */
+:global(.ant-empty) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+:global(.ant-empty-description) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 下拉菜单容器 */
+:global(.rc-virtual-list) {
+  background: #16213e !important;
+}
+
+:global(.rc-virtual-list-holder) {
+  background: #16213e !important;
+}
+
+:global(.rc-virtual-list-holder-inner) {
+  background: #16213e !important;
+}
+

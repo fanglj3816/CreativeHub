@@ -130,6 +130,7 @@ public class UserProfile {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }
 
 

@@ -32,6 +32,13 @@ spring:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
+        # Area Service 路由（地址查询）
+        - id: area-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/area/**
+          filters:
+            - StripPrefix=1
         
         # User Post Service 路由
         - id: user-post-service

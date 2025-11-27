@@ -1,0 +1,86 @@
+@import '../styles/theme.css';
+
+.address-selector-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.address-selector {
+  display: flex;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.address-label {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.address-selector-wrapper.focused .address-label {
+  top: -20px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #00d4ff;
+}
+
+.address-select {
+  flex: 1;
+}
+
+.address-selector :global(.ant-select) {
+  width: 100%;
+}
+
+.address-selector :global(.ant-select-selector) {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  height: 40px !important;
+}
+
+.address-selector :global(.ant-select-focused .ant-select-selector) {
+  border-bottom-color: #00d4ff !important;
+  box-shadow: none !important;
+}
+
+.address-selector :global(.ant-select-selector:hover) {
+  border-bottom-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.address-selector :global(.ant-select-selection-item) {
+  color: #fff !important;
+  line-height: 40px !important;
+  padding: 0 !important;
+}
+
+.address-selector :global(.ant-select-selection-placeholder) {
+  color: rgba(255, 255, 255, 0.5) !important;
+  line-height: 40px !important;
+}
+
+.address-selector :global(.ant-select-arrow) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.address-selector :global(.ant-select-disabled .ant-select-selector) {
+  background: transparent !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.address-selector :global(.ant-select-disabled .ant-select-selection-item) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 下拉菜单样式 - 深色主题 - 使用全局样式覆盖 */
+/* 注意：下拉菜单样式已在 antd-theme.css 中全局定义 */
+
