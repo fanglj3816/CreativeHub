@@ -14,3 +14,4 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, Long> 
     List<UserAddress> findByUserIdAndIsDefault(Long userId, Integer isDefault);
 }
 
+

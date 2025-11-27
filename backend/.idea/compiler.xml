@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="common-security" />
+        <module name="auth-service" />
+        <module name="common-feign" />
+        <module name="gateway-service" />
+        <module name="media-service" />
+        <module name="common-mq" />
+        <module name="common-web" />
+        <module name="user-post-service" />
+        <module name="ai-service-client" />
+        <module name="admin-service" />
+        <module name="common-core" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin-service" options="-parameters" />
+      <module name="ai-service-client" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="common-core" options="-parameters" />
+      <module name="common-feign" options="-parameters" />
+      <module name="common-mq" options="-parameters" />
+      <module name="common-security" options="-parameters" />
+      <module name="common-web" options="-parameters" />
+      <module name="gateway-service" options="-parameters" />
+      <module name="media-service" options="-parameters" />
+      <module name="user-post-service" options="-parameters" />
+    </option>
+  </component>
+</project>

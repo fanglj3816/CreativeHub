@@ -1,0 +1,379 @@
+/* 完全按照参考设计实现 - 深色主题 + 浮动标签 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.auth-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1a1a2e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+}
+
+.auth-box {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  background: #16213e;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* 登录表单 */
+.login-form {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  padding: 60px 50px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.6s ease;
+  background: #16213e;
+}
+
+/* 注册表单 */
+.register-form {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  padding: 60px 50px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.6s ease;
+  background: #16213e;
+}
+
+/* 切换动画 */
+.auth-box.login-active .login-form {
+  transform: translateX(0);
+}
+
+.auth-box.login-active .register-form {
+  transform: translateX(100%);
+}
+
+.auth-box.register-active .login-form {
+  transform: translateX(-100%);
+}
+
+.auth-box.register-active .register-form {
+  transform: translateX(0);
+}
+
+.form-content {
+  width: 100%;
+}
+
+.form-title {
+  font-size: 28px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+/* 输入框包装器 */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+/* 输入框样式 - 下划线样式，背景透明 */
+.form-input {
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  font-size: 14px;
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  transition: all 0.3s;
+}
+
+.form-input::placeholder {
+  color: transparent;
+}
+
+.form-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  background: transparent !important;
+}
+
+.form-input:focus,
+.form-input-focused {
+  border-bottom: 1px solid #00d4ff;
+  outline: none;
+  box-shadow: none;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* 浮动标签 */
+.input-label {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+/* 输入框有值或聚焦时，标签上移 */
+.input-wrapper.focused .input-label {
+  top: -20px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #00d4ff;
+}
+
+/* 密码输入框特殊处理 */
+.ant-input-password.form-input {
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ant-input-password.form-input .ant-input {
+  border: none;
+  padding: 0;
+  height: 40px;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #fff !important;
+}
+
+.ant-input-password.form-input .ant-input::placeholder {
+  color: transparent;
+}
+
+.ant-input-password.form-input .ant-input:focus {
+  box-shadow: none;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ant-input-password.form-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ant-input-password.form-input:focus-within,
+.ant-input-password.form-input-focused {
+  border-bottom: 1px solid #00d4ff;
+  box-shadow: none;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ant-input-password.form-input .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 0;
+}
+
+.ant-input-password.form-input .ant-input-password-icon:hover {
+  color: #00d4ff;
+}
+
+/* 密码输入框的标签处理已在 .input-wrapper.focused 中处理 */
+
+/* 按钮样式 - 跑马灯光标效果 */
+.submit-btn {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin-top: 30px;
+  background: #0f3460;
+  border: 1px solid #00d4ff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s;
+  text-align: left;
+  padding-left: 15px;
+}
+
+/* 跑马灯光标效果 */
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: #00d4ff;
+  animation: blink 1s infinite;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 212, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.submit-btn:hover::after {
+  left: 100%;
+}
+
+.submit-btn:hover {
+  background: #16213e;
+  border-color: #00d4ff;
+}
+
+.submit-btn:active {
+  background: #0f3460;
+}
+
+.submit-btn.ant-btn-loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.btn-text {
+  position: relative;
+  z-index: 1;
+  margin-left: 8px;
+}
+
+/* 表单底部 */
+.form-footer {
+  text-align: center;
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.switch-btn {
+  background: none;
+  border: none;
+  color: #00d4ff;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.switch-btn:hover {
+  color: #00b8e6;
+  text-decoration: underline;
+}
+
+/* 表单项样式 */
+.ant-form-item {
+  margin-bottom: 0;
+}
+
+.ant-form-item-explain-error {
+  font-size: 12px;
+  color: #ff6b6b;
+  margin-top: 5px;
+  line-height: 1.5;
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+.ant-form-item-has-error .form-input {
+  border-bottom-color: #ff6b6b;
+}
+
+.ant-form-item-has-error .form-input:focus,
+.ant-form-item-has-error .form-input-focused {
+  border-bottom-color: #ff6b6b;
+}
+
+.ant-form-item-has-error .ant-input-password.form-input {
+  border-bottom-color: #ff6b6b;
+}
+
+.ant-form-item-has-error .ant-input-password.form-input:focus-within {
+  border-bottom-color: #ff6b6b;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .auth-box {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    min-height: 600px;
+  }
+
+  .login-form,
+  .register-form {
+    width: 100%;
+    padding: 40px 30px;
+  }
+
+  .auth-box.login-active .register-form,
+  .auth-box.register-active .login-form {
+    display: none;
+  }
+
+  .auth-box.register-active .register-form,
+  .auth-box.login-active .login-form {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 20px;
+  }
+
+  .login-form,
+  .register-form {
+    padding: 30px 20px;
+  }
+
+  .form-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}

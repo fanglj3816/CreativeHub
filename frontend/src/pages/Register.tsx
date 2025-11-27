@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../api/auth';
 import type { RegisterRequest } from '../api/auth';
-import './Register.css';
+import './auth.css';
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -28,13 +28,17 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <Card title="注册 CreativeHub" className="register-card">
+    <div className="auth-page-container">
+      <div className="auth-card">
+        <h1 className="auth-title">加入 CreativeHub</h1>
+        <p className="auth-subtitle">开启您的创意之旅</p>
+
         <Form
           name="register"
           onFinish={onFinish}
           layout="vertical"
           autoComplete="off"
+          size="large"
         >
           <Form.Item
             label="邮箱"
@@ -44,7 +48,7 @@ const Register = () => {
               { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
           >
-            <Input placeholder="请输入邮箱" size="large" />
+            <Input placeholder="your@email.com" />
           </Form.Item>
 
           <Form.Item
@@ -55,7 +59,7 @@ const Register = () => {
               { min: 2, message: '昵称至少2个字符' },
             ]}
           >
-            <Input placeholder="请输入昵称" size="large" />
+            <Input placeholder="您的昵称" />
           </Form.Item>
 
           <Form.Item
@@ -66,7 +70,7 @@ const Register = () => {
               { min: 6, message: '密码至少6个字符' },
             ]}
           >
-            <Input.Password placeholder="请输入密码" size="large" />
+            <Input.Password placeholder="至少6个字符" />
           </Form.Item>
 
           <Form.Item
@@ -85,7 +89,7 @@ const Register = () => {
               }),
             ]}
           >
-            <Input.Password placeholder="请再次输入密码" size="large" />
+            <Input.Password placeholder="再次输入密码" />
           </Form.Item>
 
           <Form.Item>
@@ -94,27 +98,25 @@ const Register = () => {
               htmlType="submit"
               loading={loading}
               block
-              size="large"
             >
               注册
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <div className="auth-link">
             <span>已有账号？</span>
-            <Button
-              type="link"
+            <button
+              type="button"
+              className="auth-link-button"
               onClick={() => navigate('/login')}
-              style={{ padding: 0, marginLeft: 8 }}
             >
               立即登录
-            </Button>
+            </button>
           </div>
         </Form>
-      </Card>
+      </div>
     </div>
   );
 };
 
 export default Register;
-

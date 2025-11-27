@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
 import type { LoginRequest } from '../api/auth';
-import './Login.css';
+import './auth.css';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -29,13 +29,17 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <Card title="登录 CreativeHub" className="login-card">
+    <div className="auth-page-container">
+      <div className="auth-card">
+        <h1 className="auth-title">欢迎回来</h1>
+        <p className="auth-subtitle">登录您的 CreativeHub 账户</p>
+
         <Form
           name="login"
           onFinish={onFinish}
           layout="vertical"
           autoComplete="off"
+          size="large"
         >
           <Form.Item
             label="邮箱"
@@ -45,7 +49,7 @@ const Login = () => {
               { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
           >
-            <Input placeholder="请输入邮箱" size="large" />
+            <Input placeholder="your@email.com" />
           </Form.Item>
 
           <Form.Item
@@ -53,7 +57,7 @@ const Login = () => {
             name="password"
             rules={[{ required: true, message: '请输入密码' }]}
           >
-            <Input.Password placeholder="请输入密码" size="large" />
+            <Input.Password placeholder="请输入密码" />
           </Form.Item>
 
           <Form.Item>
@@ -62,27 +66,25 @@ const Login = () => {
               htmlType="submit"
               loading={loading}
               block
-              size="large"
             >
               登录
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <div className="auth-link">
             <span>还没有账号？</span>
-            <Button
-              type="link"
+            <button
+              type="button"
+              className="auth-link-button"
               onClick={() => navigate('/register')}
-              style={{ padding: 0, marginLeft: 8 }}
             >
               立即注册
-            </Button>
+            </button>
           </div>
         </Form>
-      </Card>
+      </div>
     </div>
   );
 };
 
 export default Login;
-
