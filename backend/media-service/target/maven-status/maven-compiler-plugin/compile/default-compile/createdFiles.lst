@@ -11,5 +11,6 @@ com/creativehub/media/controller/MediaFileController.class
 com/creativehub/media/exception/MediaServiceException.class
 com/creativehub/media/exception/MediaUploadException.class
 com/creativehub/media/security/JwtUserResolver.class
+com/creativehub/media/dto/MediaDTO.class
 com/creativehub/media/config/MinioProperties.class
 com/creativehub/media/entity/MediaFile.class

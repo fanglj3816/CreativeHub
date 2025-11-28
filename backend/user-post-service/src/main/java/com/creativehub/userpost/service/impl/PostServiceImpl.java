@@ -9,10 +9,13 @@ import com.creativehub.userpost.dto.MediaItemDTO;
 import com.creativehub.userpost.dto.PostDTO;
 import com.creativehub.userpost.entity.Post;
 import com.creativehub.userpost.entity.PostMedia;
+import com.creativehub.userpost.entity.UserProfile;
 import com.creativehub.userpost.exception.PostNotFoundException;
+import com.creativehub.userpost.exception.PostServiceException;
 import com.creativehub.userpost.exception.RemoteServiceException;
 import com.creativehub.userpost.repository.PostMediaRepository;
 import com.creativehub.userpost.repository.PostRepository;
+import com.creativehub.userpost.repository.UserProfileRepository;
 import com.creativehub.userpost.service.PostService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,21 +43,32 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMediaRepository postMediaRepository;
     private final MediaClient mediaClient;
+    private final UserProfileRepository userProfileRepository;
 
     public PostServiceImpl(PostRepository postRepository,
                            PostMediaRepository postMediaRepository,
-                           MediaClient mediaClient) {
+                           MediaClient mediaClient,
+                           UserProfileRepository userProfileRepository) {
         this.postRepository = postRepository;
         this.postMediaRepository = postMediaRepository;
         this.mediaClient = mediaClient;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Override
     @Transactional
     public Long createPost(CreatePostRequest request, Long userId) {
+        // 验证：content 和 mediaItems 至少有一个不为空
+        String content = request.getContent();
+        boolean hasContent = content != null && !content.trim().isEmpty();
+        boolean hasMedia = !CollectionUtils.isEmpty(request.getMediaItems());
+        if (!hasContent && !hasMedia) {
+            throw new PostServiceException(400, "帖子内容或媒体文件至少需要提供一个");
+        }
+
         Post post = new Post();
         post.setAuthorId(userId);
-        post.setContent(request.getContent());
+        post.setContent(content != null ? content.trim() : null);
         post.setContentType(request.getContentType());
         Post saved = postRepository.save(post);
 
@@ -111,13 +126,49 @@ public class PostServiceImpl implements PostService {
         return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostDTO> searchPosts(String keyword, int page, int pageSize) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // 如果关键词为空，返回空结果
+            return new PageImpl<>(Collections.emptyList(), PageRequest.of(0, pageSize), 0);
+        }
+        
+        int safePage = Math.max(page - 1, 0);
+        int safePageSize = Math.max(1, Math.min(pageSize, 50));
+        Pageable pageable = PageRequest.of(safePage, safePageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        
+        // 根据内容搜索帖子
+        Page<Post> postPage = postRepository.searchByContent(keyword.trim(), pageable);
+        if (postPage.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+        
+        List<Long> postIds = postPage.stream().map(Post::getId).toList();
+        List<PostMedia> postMediaList = postMediaRepository.findByPostIdIn(postIds);
+        Map<Long, List<PostMedia>> mediaByPost = postMediaList.stream()
+            .collect(Collectors.groupingBy(PostMedia::getPostId));
+        Set<Long> mediaIds = postMediaList.stream()
+            .map(PostMedia::getMediaId)
+            .collect(Collectors.toSet());
+        Map<Long, MediaDTO> mediaMap = fetchMediaMap(mediaIds);
+        List<PostDTO> dtoList = postPage.stream()
+            .map(post -> buildPostDTO(post,
+                mediaByPost.getOrDefault(post.getId(), Collections.emptyList()),
+                mediaMap))
+            .toList();
+        return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
+    }
+
     private Map<Long, MediaDTO> fetchMediaMap(Collection<Long> mediaIds) {
         if (CollectionUtils.isEmpty(mediaIds)) {
             return Collections.emptyMap();
         }
         ApiResponse<List<MediaDTO>> response;
         try {
-            response = mediaClient.getMediaByIds(mediaIds);
+            // 将 Collection 转换为 List
+            List<Long> idList = mediaIds instanceof List ? (List<Long>) mediaIds : new ArrayList<>(mediaIds);
+            response = mediaClient.getMediaByIds(idList);
         } catch (Exception ex) {
             throw new RemoteServiceException("调用 media-service 过程中发生异常", ex);
         }
@@ -141,7 +192,7 @@ public class PostServiceImpl implements PostService {
         dto.setId(post.getId());
         dto.setContent(post.getContent());
         dto.setContentType(post.getContentType());
-        dto.setAuthor(mockAuthor(post.getAuthorId()));
+        dto.setAuthor(getAuthor(post.getAuthorId()));
         dto.setCreatedAt(post.getCreatedAt());
         List<MediaDTO> mediaDtos = postMediaList.stream()
             .sorted(Comparator.comparing(pm -> pm.getSortOrder() == null ? 0 : pm.getSortOrder()))
@@ -152,11 +203,28 @@ public class PostServiceImpl implements PostService {
         return dto;
     }
 
-    private AuthorDTO mockAuthor(Long authorId) {
+    /**
+     * 根据用户 ID 获取作者信息
+     * 从 user_profile 表查询真实用户数据
+     */
+    private AuthorDTO getAuthor(Long authorId) {
         AuthorDTO author = new AuthorDTO();
         author.setId(authorId);
-        author.setNickname("用户" + authorId);
-        author.setAvatar("https://static.creativehub/avatar/default.png");
+        
+        // 从数据库查询用户资料
+        Optional<UserProfile> userProfileOpt = userProfileRepository.findByUserId(authorId);
+        if (userProfileOpt.isPresent()) {
+            UserProfile profile = userProfileOpt.get();
+            author.setNickname(profile.getNickname() != null && !profile.getNickname().trim().isEmpty() 
+                ? profile.getNickname() 
+                : "用户" + authorId);
+            author.setAvatar(profile.getAvatarUrl());
+        } else {
+            // 如果用户资料不存在，使用默认值
+            author.setNickname("用户" + authorId);
+            author.setAvatar(null); // 前端会使用默认头像
+        }
+        
         return author;
     }
 }

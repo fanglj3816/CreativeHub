@@ -11,6 +11,8 @@ public interface PostService {
     PostDTO getPostDetail(Long postId);
 
     Page<PostDTO> getFeed(int page, int pageSize);
+
+    Page<PostDTO> searchPosts(String keyword, int page, int pageSize);
 }
 
 

@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AuthPage from '../pages/AuthPage';
 import Home from '../pages/Home';
+import CreatePost from '../pages/CreatePost';
+import PostDetail from '../pages/PostDetail';
 
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -25,6 +27,22 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Home />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/create-post',
+    element: (
+      <ProtectedRoute>
+        <CreatePost />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/post/:id',
+    element: (
+      <ProtectedRoute>
+        <PostDetail />
       </ProtectedRoute>
     ),
   },

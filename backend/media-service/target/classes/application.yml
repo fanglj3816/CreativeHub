@@ -13,6 +13,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  servlet:
+    multipart:
+      max-file-size: 64MB  # 单个文件最大 64MB
+      max-request-size: 64MB  # 整个请求最大 64MB
   cloud:
     nacos:
       discovery:

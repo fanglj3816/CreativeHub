@@ -43,6 +43,19 @@ public class PostController {
         return ApiResponse.success(postDTO);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<PageResponse<PostDTO>> searchPosts(@RequestParam("keyword") String keyword,
+                                                          @RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "10") int pageSize) {
+        Page<PostDTO> postPage = postService.searchPosts(keyword, page, pageSize);
+        PageResponse<PostDTO> response = new PageResponse<>(
+            postPage.getContent(),
+            page,
+            postPage.getSize(),
+            postPage.getTotalElements());
+        return ApiResponse.success(response);
+    }
+
     @GetMapping
     public ApiResponse<PageResponse<PostDTO>> getFeed(@RequestParam(defaultValue = "1") int page,
                                                       @RequestParam(defaultValue = "10") int pageSize) {

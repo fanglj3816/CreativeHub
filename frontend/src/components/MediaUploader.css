@@ -1,0 +1,75 @@
+@import '../styles/theme.css';
+
+.media-uploader {
+  margin: var(--spacing-lg) 0;
+}
+
+.upload-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.upload-btn {
+  flex: 1;
+  min-width: 120px;
+  height: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.upload-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color-hover);
+  color: var(--text-primary);
+  box-shadow: 0 0 15px var(--glow-color);
+  transform: translateY(-2px);
+}
+
+.upload-btn.image-btn:hover {
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.upload-btn.video-btn:hover {
+  border-color: rgba(255, 107, 107, 0.6);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+}
+
+.upload-btn.audio-btn:hover {
+  border-color: rgba(107, 255, 107, 0.6);
+  box-shadow: 0 0 15px rgba(107, 255, 107, 0.3);
+}
+
+.upload-btn .anticon {
+  font-size: 18px;
+}
+
+/* Ant Design Upload 组件样式覆盖 */
+.media-uploader :global(.ant-upload) {
+  width: 100%;
+}
+
+.media-uploader :global(.ant-upload-list) {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .upload-buttons {
+    flex-direction: column;
+  }
+  
+  .upload-btn {
+    width: 100%;
+  }
+}
+

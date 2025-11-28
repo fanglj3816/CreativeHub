@@ -1,12 +1,10 @@
 package com.creativehub.userpost.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public class CreatePostRequest {
 
-    @NotBlank(message = "帖子内容不能为空")
     private String content;
 
     @NotNull(message = "contentType 不能为空")

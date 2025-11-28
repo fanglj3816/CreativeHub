@@ -31,6 +31,8 @@ public class MediaFile {
 
     private Integer status;
 
+    private String md5;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -133,6 +135,14 @@ public class MediaFile {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 
     public LocalDateTime getCreatedAt() {

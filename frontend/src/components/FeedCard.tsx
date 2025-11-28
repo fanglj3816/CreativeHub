@@ -1,5 +1,27 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AudioPlayer from './AudioPlayer';
 import './FeedCard.css';
+
+// 默认头像组件（使用 IconPark Me 图标，符合系统 UI）
+const DefaultAvatar: React.FC = () => (
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="24" cy="24" r="24" fill="rgba(0, 212, 255, 0.1)"/>
+    <g transform="translate(12, 12)">
+      {/* IconPark Me 图标 - 调整颜色为系统主题色 */}
+      <circle cx="12" cy="8" r="4" stroke="rgba(0, 212, 255, 0.8)" strokeWidth="1.5" fill="none"/>
+      <path 
+        d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" 
+        stroke="rgba(0, 212, 255, 0.8)" 
+        strokeWidth="1.5" 
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="8" r="3" stroke="rgba(0, 212, 255, 0.4)" strokeWidth="1" fill="none"/>
+    </g>
+  </svg>
+);
 
 interface FeedCardProps {
   id: number;
@@ -22,12 +44,15 @@ interface FeedCardProps {
     shares: number;
   };
   timestamp: string;
+  onClick?: () => void; // 可选的点击处理函数
 }
 
-const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }) => {
+const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timestamp, onClick }) => {
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(stats.likes);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -38,14 +63,55 @@ const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }
     setIsBookmarked(!isBookmarked);
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // 如果点击的是按钮或链接，不触发卡片点击
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('a')) {
+      return;
+    }
+    if (onClick) {
+      onClick();
+    } else {
+      navigate(`/post/${id}`);
+    }
+  };
+
   const renderMedia = () => {
     if (!content.media) return null;
 
     switch (content.media.type) {
       case 'image':
+        if (!content.media.url) {
+          console.warn('FeedCard: 图片 URL 为空', { postId: id, media: content.media });
+          return null;
+        }
         return (
           <div className="media-container image-container">
-            <img src={content.media.url} alt="Post content" />
+            {imageError ? (
+              <div className="media-error">
+                <span>图片加载失败</span>
+              </div>
+            ) : (
+              <img
+                src={content.media.url}
+                alt="Post content"
+                onError={(e) => {
+                  console.error('FeedCard: 图片加载失败', {
+                    postId: id,
+                    url: content.media?.url,
+                    error: e,
+                  });
+                  setImageError(true);
+                }}
+                onLoad={() => {
+                  // 图片加载成功，清除错误状态
+                  if (imageError) {
+                    setImageError(false);
+                  }
+                }}
+                loading="lazy"
+              />
+            )}
           </div>
         );
       case 'video':
@@ -57,35 +123,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }
       case 'audio':
         return (
           <div className="media-container audio-container">
-            <div className="audio-waveform">
-              <svg width="100%" height="60" viewBox="0 0 400 60" preserveAspectRatio="none">
-                <path
-                  d="M 0 30 Q 20 10, 40 30 T 80 30 T 120 30 T 160 30 T 200 30 T 240 30 T 280 30 T 320 30 T 360 30 T 400 30"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <path
-                  d="M 0 30 Q 20 50, 40 30 T 80 30 T 120 30 T 160 30 T 200 30 T 240 30 T 280 30 T 320 30 T 360 30 T 400 30"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  opacity="0.4"
-                />
-              </svg>
-            </div>
-            <div className="audio-controls">
-              <button className="play-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-              </button>
-              <div className="audio-info">
-                <span className="audio-title">原创音乐作品</span>
-                <span className="audio-duration">3:24</span>
-              </div>
-            </div>
+            <AudioPlayer url={content.media.url} />
           </div>
         );
       default:
@@ -94,10 +132,72 @@ const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }
   };
 
   return (
-    <article className="feed-card">
+    <article className="feed-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <div className="card-header">
         <div className="author-info">
-          <div className="author-avatar">{author.avatar}</div>
+          <div className="author-avatar">
+            {author.avatar && (author.avatar.startsWith('http://') || author.avatar.startsWith('https://')) ? (
+              <img src={author.avatar} alt={author.name} onError={(e) => {
+                // 如果图片加载失败，显示默认头像
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                // 如果还没有默认头像，添加它
+                const parent = target.parentElement;
+                if (parent && !parent.querySelector('svg')) {
+                  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                  svg.setAttribute('width', '48');
+                  svg.setAttribute('height', '48');
+                  svg.setAttribute('viewBox', '0 0 48 48');
+                  svg.setAttribute('fill', 'none');
+                  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                  
+                  const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                  bgCircle.setAttribute('cx', '24');
+                  bgCircle.setAttribute('cy', '24');
+                  bgCircle.setAttribute('r', '24');
+                  bgCircle.setAttribute('fill', 'rgba(0, 212, 255, 0.1)');
+                  
+                  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                  g.setAttribute('transform', 'translate(12, 12)');
+                  
+                  const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                  outerCircle.setAttribute('cx', '12');
+                  outerCircle.setAttribute('cy', '12');
+                  outerCircle.setAttribute('r', '10');
+                  outerCircle.setAttribute('stroke', 'rgba(0, 212, 255, 0.4)');
+                  outerCircle.setAttribute('stroke-width', '1.5');
+                  outerCircle.setAttribute('fill', 'none');
+                  
+                  const headCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                  headCircle.setAttribute('cx', '12');
+                  headCircle.setAttribute('cy', '8');
+                  headCircle.setAttribute('r', '3');
+                  headCircle.setAttribute('stroke', '#00d4ff');
+                  headCircle.setAttribute('stroke-width', '1.5');
+                  headCircle.setAttribute('fill', 'none');
+                  headCircle.setAttribute('stroke-linecap', 'round');
+                  headCircle.setAttribute('stroke-linejoin', 'round');
+                  
+                  const bodyPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                  bodyPath.setAttribute('d', 'M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6');
+                  bodyPath.setAttribute('stroke', '#00d4ff');
+                  bodyPath.setAttribute('stroke-width', '1.5');
+                  bodyPath.setAttribute('fill', 'none');
+                  bodyPath.setAttribute('stroke-linecap', 'round');
+                  bodyPath.setAttribute('stroke-linejoin', 'round');
+                  
+                  g.appendChild(outerCircle);
+                  g.appendChild(headCircle);
+                  g.appendChild(bodyPath);
+                  svg.appendChild(bgCircle);
+                  svg.appendChild(g);
+                  parent.appendChild(svg);
+                }
+              }} />
+            ) : (
+              <DefaultAvatar />
+            )}
+          </div>
           <div className="author-details">
             <div className="author-name">
               {author.name}
@@ -118,13 +218,16 @@ const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }
         </div>
       )}
 
-      {content.media && renderMedia()}
+      {content.media && content.media.url && renderMedia()}
 
       <div className="card-footer">
         <div className="card-actions">
           <button
             className={`action-btn like-btn ${isLiked ? 'active' : ''}`}
-            onClick={handleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -152,7 +255,10 @@ const FeedCard: React.FC<FeedCardProps> = ({ author, content, stats, timestamp }
 
           <button
             className={`action-btn bookmark-btn ${isBookmarked ? 'active' : ''}`}
-            onClick={handleBookmark}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleBookmark();
+            }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />

@@ -40,11 +40,18 @@ spring:
           filters:
             - StripPrefix=1
         
-        # User Post Service 路由
-        - id: user-post-service
+        # User Post Service 路由 - Post 相关接口
+        - id: user-post-service-posts
           uri: lb://user-post-service
           predicates:
-            - Path=/api/user/**,/api/post/**,/api/comment/**
+            - Path=/api/post/**
+          filters:
+            - StripPrefix=2
+        # User Post Service 路由 - User 和 Comment 相关接口
+        - id: user-post-service-others
+          uri: lb://user-post-service
+          predicates:
+            - Path=/api/user/**,/api/comment/**
           filters:
             - StripPrefix=1
         

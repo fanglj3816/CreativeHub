@@ -5,6 +5,81 @@
   margin: 0 auto;
 }
 
+.home-top-bar {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+}
+
+.home-search {
+  flex: 1;
+  max-width: 300px;
+}
+
+.home-search .ant-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.home-search .ant-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.home-search .ant-input:hover {
+  border-color: var(--border-color-hover);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.home-search .ant-input:focus {
+  border-color: var(--text-accent);
+  box-shadow: 0 0 10px var(--glow-color);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.home-search .ant-input-search-button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: none;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
+}
+
+.home-search .ant-input-search-button:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color-hover);
+  color: var(--text-accent);
+}
+
+.create-post-btn {
+  background: linear-gradient(135deg, var(--text-accent) 0%, #0099cc 100%);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  height: 40px;
+  padding: 0 var(--spacing-lg);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.create-post-btn:hover {
+  background: linear-gradient(135deg, #00e5ff 0%, var(--text-accent) 100%);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+}
+
 .feed-header {
   margin-bottom: var(--spacing-xl);
   text-align: center;
@@ -30,6 +105,14 @@
 .feed-container {
   display: flex;
   flex-direction: column;
+}
+
+.feed-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 /* 响应式 */

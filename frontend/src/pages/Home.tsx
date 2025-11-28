@@ -1,21 +1,90 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Input, Button, Spin, App } from 'antd';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
 import FeedCard from '../components/FeedCard';
+import { getFeed, searchPosts, type PostDTO } from '../api/post';
+import { formatPostForFeedCard } from '../utils/postMapper';
 import './Home.css';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { message } = App.useApp();
+  const [realPosts, setRealPosts] = useState<PostDTO[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
+      return;
     }
+    // 加载真实帖子数据
+    loadFeed();
   }, [navigate]);
 
-  // Mock 数据
-  const feedData = [
+  const loadFeed = async () => {
+    try {
+      setLoading(true);
+      const response = await getFeed(1, 10);
+      if (response.code === 0 && response.data) {
+        // 后端返回的是 items 字段，不是 content
+        const posts = response.data.items || [];
+        // 调试：打印帖子数据，检查媒体信息
+        console.log('加载 Feed 成功，帖子数量:', posts.length);
+        posts.forEach((post) => {
+          if (post.mediaList && post.mediaList.length > 0) {
+            console.log('帖子媒体信息:', {
+              postId: post.id,
+              mediaCount: post.mediaList.length,
+              firstMedia: post.mediaList[0],
+            });
+          }
+        });
+        setRealPosts(posts);
+      } else {
+        console.warn('加载 Feed 返回非成功状态:', response);
+      }
+    } catch (error: any) {
+      console.error('加载 Feed 失败:', error);
+      // 静默处理错误，不显示错误提示，避免影响用户体验
+      // 如果后端服务未启动或接口有问题，只显示假数据
+      setRealPosts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (value: string) => {
+    setSearchKeyword(value);
+    if (!value || value.trim() === '') {
+      // 搜索内容为空，重新加载默认 Feed
+      loadFeed();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await searchPosts(value.trim());
+      if (response.code === 0 && response.data) {
+        // 后端返回的是 items 字段
+        setRealPosts(response.data.items || []);
+      } else {
+        console.warn('搜索返回非成功状态:', response);
+        setRealPosts([]);
+      }
+    } catch (error: any) {
+      console.error('搜索失败:', error);
+      message.error('搜索失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mock 数据（假数据，始终显示在真实数据下方）
+  const fakeFeedData = [
     {
       id: 1,
       author: {
@@ -127,14 +196,47 @@ const Home = () => {
   return (
     <MainLayout>
       <div className="home-page">
+        <div className="home-top-bar">
+          <Input.Search
+            className="home-search"
+            placeholder="搜索作品、用户..."
+            prefix={<SearchOutlined />}
+            allowClear
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onSearch={handleSearch}
+          />
+          <Button
+            className="create-post-btn"
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/create-post')}
+          >
+            发布作品
+          </Button>
+        </div>
+
         <div className="feed-header">
           <h1 className="feed-title">动态</h1>
           <p className="feed-subtitle">发现精彩的音乐与摄影作品</p>
         </div>
         
         <div className="feed-container">
-          {feedData.map((item) => (
-            <FeedCard key={item.id} {...item} />
+          {loading && (
+            <div className="feed-loading">
+              <Spin size="large" />
+            </div>
+          )}
+          
+          {/* 真实帖子数据 */}
+          {!loading && realPosts.map((post) => {
+            const feedCardData = formatPostForFeedCard(post);
+            return <FeedCard key={`real-${post.id}`} {...feedCardData} />;
+          })}
+
+          {/* 假数据（始终显示在真实数据下方） */}
+          {fakeFeedData.map((item) => (
+            <FeedCard key={`fake-${item.id}`} {...item} />
           ))}
         </div>
       </div>
