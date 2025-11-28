@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, Spin, App } from 'antd';
+import { Input, Button, Spin, App, Tooltip } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
 import FeedCard from '../components/FeedCard';
@@ -197,23 +197,32 @@ const Home = () => {
     <MainLayout>
       <div className="home-page">
         <div className="home-top-bar">
-          <Input.Search
-            className="home-search"
-            placeholder="搜索作品、用户..."
-            prefix={<SearchOutlined />}
-            allowClear
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            onSearch={handleSearch}
-          />
-          <Button
-            className="create-post-btn"
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate('/create-post')}
-          >
-            发布作品
-          </Button>
+          <div className="home-search-wrapper">
+            <Tooltip title="可以发帖子" placement="bottom">
+              <button
+                className="search-add-btn"
+                onClick={() => navigate('/create-post')}
+                aria-label="发布作品"
+              >
+                <PlusOutlined />
+              </button>
+            </Tooltip>
+            <Input
+              className="home-search-input"
+              placeholder="询问任何问题"
+              allowClear
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
+            />
+            <button
+              className="search-submit-btn"
+              onClick={() => handleSearch(searchKeyword)}
+              aria-label="搜索"
+            >
+              <SearchOutlined />
+            </button>
+          </div>
         </div>
 
         <div className="feed-header">

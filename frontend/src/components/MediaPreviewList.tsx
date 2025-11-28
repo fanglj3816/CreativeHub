@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import AudioPlayer from './AudioPlayer';
+import VideoPlayer from './VideoPlayer';
 import type { MediaItem } from '../api/post';
 import './MediaPreviewList.css';
 
@@ -49,7 +50,7 @@ const MediaPreviewList: React.FC<MediaPreviewListProps> = ({ mediaItems, onDelet
 
             return (
               <div key={item.mediaId} className="media-preview-item">
-                <div className="media-preview-content">
+                <div className={`media-preview-content ${item.type === 'VIDEO' ? 'video-content' : 'image-content'}`}>
                   {item.type === 'IMAGE' && (
                     <>
                       {imageErrors.has(item.mediaId) ? (
@@ -68,7 +69,7 @@ const MediaPreviewList: React.FC<MediaPreviewListProps> = ({ mediaItems, onDelet
                     </>
                   )}
                   {item.type === 'VIDEO' && (
-                    <video src={videoUrl} controls className="preview-video" />
+                    <VideoPlayer url={videoUrl} />
                   )}
                 </div>
                 <Button

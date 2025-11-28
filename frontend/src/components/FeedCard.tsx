@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AudioPlayer from './AudioPlayer';
+import VideoPlayer from './VideoPlayer';
 import './FeedCard.css';
 
 // 默认头像组件（使用 IconPark Me 图标，符合系统 UI）
@@ -118,7 +119,10 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
       case 'video':
         return (
           <div className="media-container video-container">
-            <video src={content.media.url} controls poster={content.media.thumbnail} />
+            <VideoPlayer 
+              url={content.media.url} 
+              poster={content.media.thumbnail}
+            />
           </div>
         );
       case 'audio':

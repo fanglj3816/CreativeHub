@@ -112,11 +112,10 @@
   padding: var(--spacing-lg);
 }
 
-.video-container video {
+.video-container {
+  position: relative;
   width: 100%;
-  height: auto;
-  display: block;
-  max-height: 500px;
+  background: transparent;
 }
 
 .audio-container {

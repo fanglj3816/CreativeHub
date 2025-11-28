@@ -48,7 +48,9 @@ export const formatPostForFeedCard = (post: PostDTO) => {
         media = {
           type: 'video',
           url: firstMedia.url,
-          thumbnail: firstMedia.url, // 视频可以使用第一帧作为缩略图
+          // 如果后端有单独的封面字段，可以在这里设置
+          // 目前后端没有封面字段，所以不设置 thumbnail
+          thumbnail: undefined,
         };
       } else if (fileType === 'AUDIO') {
         media = {
