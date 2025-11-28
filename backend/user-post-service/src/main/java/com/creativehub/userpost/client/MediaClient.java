@@ -1,7 +1,7 @@
 package com.creativehub.userpost.client;
 
-import com.creativehub.userpost.dto.ApiResponse;
-import com.creativehub.userpost.dto.MediaDTO;
+import com.creativehub.common.core.dto.ApiResponse;
+import com.creativehub.common.core.dto.MediaDTO;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

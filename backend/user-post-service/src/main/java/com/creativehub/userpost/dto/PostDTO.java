@@ -1,5 +1,6 @@
 package com.creativehub.userpost.dto;
 
+import com.creativehub.common.core.dto.MediaDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 

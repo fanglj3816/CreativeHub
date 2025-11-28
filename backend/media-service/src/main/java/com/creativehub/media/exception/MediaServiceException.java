@@ -1,21 +1,15 @@
 package com.creativehub.media.exception;
 
-public class MediaServiceException extends RuntimeException {
+import com.creativehub.common.core.exception.BusinessException;
 
-    private final int code;
+public class MediaServiceException extends BusinessException {
 
     public MediaServiceException(int code, String message) {
-        super(message);
-        this.code = code;
+        super(code, message);
     }
 
     public MediaServiceException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
+        super(code, message, cause);
     }
 }
 

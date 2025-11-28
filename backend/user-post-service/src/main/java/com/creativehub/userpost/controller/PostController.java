@@ -1,11 +1,11 @@
 package com.creativehub.userpost.controller;
 
-import com.creativehub.userpost.dto.ApiResponse;
+import com.creativehub.common.core.dto.ApiResponse;
+import com.creativehub.common.core.dto.PageResponse;
+import com.creativehub.common.security.JwtUserResolver;
 import com.creativehub.userpost.dto.CreatePostRequest;
-import com.creativehub.userpost.dto.PageResponse;
 import com.creativehub.userpost.dto.PostDTO;
 import com.creativehub.userpost.service.PostService;
-import com.creativehub.userpost.util.JwtUserResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

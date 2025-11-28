@@ -1,6 +1,6 @@
 import React from 'react';
 import { Upload, Button, message } from 'antd';
-import { UploadOutlined, PictureOutlined, VideoCameraOutlined, SoundOutlined } from '@ant-design/icons';
+import { PictureOutlined, VideoCameraOutlined, SoundOutlined } from '@ant-design/icons';
 import { uploadMedia } from '../api/media';
 import type { MediaItem } from '../api/post';
 import './MediaUploader.css';

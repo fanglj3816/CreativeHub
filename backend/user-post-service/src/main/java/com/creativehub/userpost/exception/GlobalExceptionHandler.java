@@ -1,6 +1,6 @@
 package com.creativehub.userpost.exception;
 
-import com.creativehub.userpost.dto.ApiResponse;
+import com.creativehub.common.core.dto.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +18,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PostServiceException.class)
     public ResponseEntity<ApiResponse<Void>> handlePostService(PostServiceException ex) {
         log.warn("业务异常: {}", ex.getMessage());
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        if (ex instanceof UnauthorizedException) {
-            status = HttpStatus.UNAUTHORIZED;
-        } else if (ex instanceof PostNotFoundException) {
-            status = HttpStatus.NOT_FOUND;
-        }
+        HttpStatus status = mapStatus(ex.getCode());
         return new ResponseEntity<>(ApiResponse.error(ex.getCode(), ex.getMessage()), status);
     }
 
@@ -47,6 +42,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error("系统异常", ex);
         return new ResponseEntity<>(ApiResponse.error(500, "系统繁忙，请稍后再试"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    private HttpStatus mapStatus(int code) {
+        return switch (code) {
+            case 401 -> HttpStatus.UNAUTHORIZED;
+            case 404 -> HttpStatus.NOT_FOUND;
+            default -> HttpStatus.BAD_REQUEST;
+        };
     }
 }
 

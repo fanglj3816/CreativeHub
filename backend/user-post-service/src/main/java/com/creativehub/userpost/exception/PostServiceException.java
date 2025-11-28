@@ -1,21 +1,15 @@
 package com.creativehub.userpost.exception;
 
-public class PostServiceException extends RuntimeException {
+import com.creativehub.common.core.exception.BusinessException;
 
-    private final int code;
+public class PostServiceException extends BusinessException {
 
     public PostServiceException(int code, String message) {
-        super(message);
-        this.code = code;
+        super(code, message);
     }
 
     public PostServiceException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
+        super(code, message, cause);
     }
 }
 

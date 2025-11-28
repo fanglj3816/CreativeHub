@@ -28,6 +28,7 @@ export const formatPostForFeedCard = (post: PostDTO) => {
     type: 'image' | 'video' | 'audio';
     url: string;
     thumbnail?: string;
+    fileName?: string;
   } | undefined;
 
   if (post.mediaList && post.mediaList.length > 0) {

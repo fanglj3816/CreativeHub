@@ -3,14 +3,10 @@ com/creativehub/media/dto/UploadResponse.class
 com/creativehub/media/config/MinioConfig.class
 com/creativehub/media/MediaServiceApplication.class
 com/creativehub/media/service/impl/MediaFileServiceImpl.class
-com/creativehub/media/exception/UnauthorizedException.class
 com/creativehub/media/exception/GlobalExceptionHandler.class
 com/creativehub/media/repository/MediaFileRepository.class
-com/creativehub/media/dto/ApiResponse.class
 com/creativehub/media/controller/MediaFileController.class
 com/creativehub/media/exception/MediaServiceException.class
 com/creativehub/media/exception/MediaUploadException.class
-com/creativehub/media/security/JwtUserResolver.class
-com/creativehub/media/dto/MediaDTO.class
 com/creativehub/media/config/MinioProperties.class
 com/creativehub/media/entity/MediaFile.class

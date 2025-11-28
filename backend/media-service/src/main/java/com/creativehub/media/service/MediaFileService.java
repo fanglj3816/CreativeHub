@@ -1,6 +1,6 @@
 package com.creativehub.media.service;
 
-import com.creativehub.media.dto.MediaDTO;
+import com.creativehub.common.core.dto.MediaDTO;
 import com.creativehub.media.dto.UploadResponse;
 import java.util.Collection;
 import java.util.List;

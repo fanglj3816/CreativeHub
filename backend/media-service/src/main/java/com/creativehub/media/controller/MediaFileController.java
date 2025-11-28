@@ -1,12 +1,11 @@
 package com.creativehub.media.controller;
 
-import com.creativehub.media.dto.ApiResponse;
-import com.creativehub.media.dto.MediaDTO;
+import com.creativehub.common.core.dto.ApiResponse;
+import com.creativehub.common.core.dto.MediaDTO;
+import com.creativehub.common.security.JwtUserResolver;
 import com.creativehub.media.dto.UploadResponse;
-import com.creativehub.media.security.JwtUserResolver;
 import com.creativehub.media.service.MediaFileService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

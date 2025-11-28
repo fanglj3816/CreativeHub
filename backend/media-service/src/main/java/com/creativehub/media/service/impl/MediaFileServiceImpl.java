@@ -1,7 +1,7 @@
 package com.creativehub.media.service.impl;
 
+import com.creativehub.common.core.dto.MediaDTO;
 import com.creativehub.media.config.MinioProperties;
-import com.creativehub.media.dto.MediaDTO;
 import com.creativehub.media.dto.UploadResponse;
 import com.creativehub.media.entity.MediaFile;
 import com.creativehub.media.exception.MediaUploadException;

@@ -1,10 +1,10 @@
 package com.creativehub.userpost.service.impl;
 
+import com.creativehub.common.core.dto.ApiResponse;
+import com.creativehub.common.core.dto.MediaDTO;
 import com.creativehub.userpost.client.MediaClient;
-import com.creativehub.userpost.dto.ApiResponse;
 import com.creativehub.userpost.dto.AuthorDTO;
 import com.creativehub.userpost.dto.CreatePostRequest;
-import com.creativehub.userpost.dto.MediaDTO;
 import com.creativehub.userpost.dto.MediaItemDTO;
 import com.creativehub.userpost.dto.PostDTO;
 import com.creativehub.userpost.entity.Post;
