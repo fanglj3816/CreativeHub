@@ -8,6 +8,7 @@ public class MediaDTO {
     private Integer width;
     private Integer height;
     private Integer durationSec;
+    private String displayName;
 
     public Long getId() {
         return id;
@@ -55,6 +56,14 @@ public class MediaDTO {
 
     public void setDurationSec(Integer durationSec) {
         this.durationSec = durationSec;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
 
