@@ -19,3 +19,4 @@ public interface ChinaAreaRepository extends JpaRepository<ChinaArea, String> {
     List<ChinaArea> findByParentIdAndLevel(String parentId, Integer level);
 }
 
+
