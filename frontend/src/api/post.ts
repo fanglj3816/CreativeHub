@@ -29,6 +29,7 @@ export interface MediaDTO {
   width?: number;
   height?: number;
   durationSec?: number;
+  displayName?: string; // 用于展示的名称
 }
 
 export interface AuthorDTO {

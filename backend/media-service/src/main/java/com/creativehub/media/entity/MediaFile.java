@@ -33,6 +33,12 @@ public class MediaFile {
 
     private String md5;
 
+    @Column(name = "original_name", length = 255)
+    private String originalName;
+
+    @Column(name = "display_name", length = 255)
+    private String displayName;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -143,6 +149,22 @@ public class MediaFile {
 
     public void setMd5(String md5) {
         this.md5 = md5;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public LocalDateTime getCreatedAt() {

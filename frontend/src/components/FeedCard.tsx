@@ -36,6 +36,7 @@ interface FeedCardProps {
       type: 'image' | 'video' | 'audio';
       url: string;
       thumbnail?: string;
+      fileName?: string; // 音频文件名
     };
   };
   stats: {
@@ -123,7 +124,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
       case 'audio':
         return (
           <div className="media-container audio-container">
-            <AudioPlayer url={content.media.url} />
+            <AudioPlayer url={content.media.url} fileName={content.media.fileName} />
           </div>
         );
       default:

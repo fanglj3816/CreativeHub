@@ -87,6 +87,8 @@ public class MediaFileServiceImpl implements MediaFileService {
         mediaFile.setSizeBytes(file.getSize());
         mediaFile.setStatus(1);
         mediaFile.setMd5(md5); // 保存 MD5 值用于后续去重
+        mediaFile.setOriginalName(file.getOriginalFilename()); // 保存原始文件名
+        // displayName 暂时为空，后续可以根据业务需求设置
 
         MediaFile saved = mediaFileRepository.save(mediaFile);
         return new UploadResponse(saved.getId(), saved.getUrl());
@@ -160,6 +162,12 @@ public class MediaFileServiceImpl implements MediaFileService {
         dto.setWidth(mediaFile.getWidth());
         dto.setHeight(mediaFile.getHeight());
         dto.setDurationSec(mediaFile.getDurationSec());
+        // 优先使用 displayName，如果没有则使用 originalName
+        String displayName = mediaFile.getDisplayName();
+        if (displayName == null || displayName.trim().isEmpty()) {
+            displayName = mediaFile.getOriginalName();
+        }
+        dto.setDisplayName(displayName);
         return dto;
     }
 }

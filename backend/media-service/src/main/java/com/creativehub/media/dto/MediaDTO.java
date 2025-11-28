@@ -8,6 +8,7 @@ public class MediaDTO {
     private Integer width;
     private Integer height;
     private Integer durationSec;
+    private String displayName; // 用于展示的名称
 
     public MediaDTO() {
     }
@@ -67,6 +68,14 @@ public class MediaDTO {
 
     public void setDurationSec(Integer durationSec) {
         this.durationSec = durationSec;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
 

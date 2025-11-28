@@ -53,6 +53,7 @@ export const formatPostForFeedCard = (post: PostDTO) => {
         media = {
           type: 'audio',
           url: firstMedia.url,
+          fileName: firstMedia.displayName || undefined, // 传递显示名称
         };
       }
     }
