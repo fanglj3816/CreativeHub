@@ -3,7 +3,6 @@ package com.creativehub.media.controller;
 import com.creativehub.common.core.dto.ApiResponse;
 import com.creativehub.common.core.dto.MediaDTO;
 import com.creativehub.common.security.JwtUserResolver;
-import com.creativehub.media.dto.UploadResponse;
 import com.creativehub.media.service.MediaFileService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,11 +28,11 @@ public class MediaFileController {
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<UploadResponse> uploadMedia(@RequestPart("file") MultipartFile file,
-                                                   HttpServletRequest request) {
+    public ApiResponse<MediaDTO> uploadMedia(@RequestPart("file") MultipartFile file,
+                                             HttpServletRequest request) {
         Long userId = jwtUserResolver.resolveUserId(request);
-        UploadResponse response = mediaFileService.uploadMedia(file, userId);
-        return ApiResponse.success(response);
+        MediaDTO mediaDTO = mediaFileService.uploadMedia(file, userId);
+        return ApiResponse.success(mediaDTO);
     }
 
     @GetMapping("/batch")
