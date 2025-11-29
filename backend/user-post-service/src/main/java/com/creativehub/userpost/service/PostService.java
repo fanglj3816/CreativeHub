@@ -13,6 +13,13 @@ public interface PostService {
     Page<PostDTO> getFeed(int page, int pageSize);
 
     Page<PostDTO> searchPosts(String keyword, int page, int pageSize);
+
+    /**
+     * 删除帖子
+     * @param postId 帖子 ID
+     * @param userId 用户 ID（用于权限验证）
+     */
+    void deletePost(Long postId, Long userId);
 }
 
 

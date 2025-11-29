@@ -37,3 +37,4 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ name, avatar, followers, isFo
 export default CreatorCard;
 
 
+

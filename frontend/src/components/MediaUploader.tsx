@@ -1,7 +1,7 @@
 import React from 'react';
 import { Upload, Button, message } from 'antd';
 import { PictureOutlined, VideoCameraOutlined, SoundOutlined } from '@ant-design/icons';
-import { uploadMedia } from '../api/media';
+import { uploadMedia, type MediaDTO } from '../api/media';
 import type { MediaItem } from '../api/post';
 import './MediaUploader.css';
 
@@ -15,21 +15,26 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({ onUploadSuccess }) => {
     const previewUrl = URL.createObjectURL(file);
     
     try {
-      const response = await uploadMedia(file);
-      if (response.code === 0 && response.data) {
-        const mediaItem: MediaItem = {
-          mediaId: response.data.id,
-          url: response.data.url,
-          type,
-          sortOrder: 0, // 将在父组件中更新
-          previewUrl, // 保留本地预览 URL
-          fileName: file.name, // 传递文件名
-        };
-        onUploadSuccess(mediaItem);
-        message.success('上传成功');
+      const mediaDTO: MediaDTO = await uploadMedia(file);
+      
+      const mediaItem: MediaItem = {
+        mediaId: mediaDTO.id,
+        url: mediaDTO.url || null,
+        type,
+        sortOrder: 0, // 将在父组件中更新
+        previewUrl, // 保留本地预览 URL
+        fileName: file.name,
+        status: mediaDTO.status ?? 0,
+        progress: mediaDTO.progress ? Number(mediaDTO.progress) : undefined,
+        errorMsg: mediaDTO.errorMsg || null,
+      };
+      
+      onUploadSuccess(mediaItem);
+      
+      if (type === 'VIDEO' && mediaDTO.status === 1) {
+        message.success('视频上传成功，正在转码中...');
       } else {
-        URL.revokeObjectURL(previewUrl); // 清理预览 URL
-        message.error(response.message || '上传失败');
+        message.success('上传成功');
       }
     } catch (error: any) {
       URL.revokeObjectURL(previewUrl); // 清理预览 URL

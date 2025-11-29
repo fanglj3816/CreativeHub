@@ -4,210 +4,155 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * FFprobe 工具类
- * 用于获取媒体文件元数据（宽高、时长等）
+ * FFprobe 工具类，用于提取媒体元数据
  */
-@Component
 public class FFprobeUtil {
 
     private static final Logger log = LoggerFactory.getLogger(FFprobeUtil.class);
-    private static final int DEFAULT_TIMEOUT_SECONDS = 30;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final long DEFAULT_TIMEOUT_SECONDS = 60;
 
     /**
-     * 获取媒体文件元数据
-     *
-     * @param filePath 文件路径
-     * @return 媒体元数据，失败返回 null
+     * 媒体元数据 DTO
      */
-    public MediaMeta getMediaMeta(String filePath) {
-        return getMediaMeta(filePath, DEFAULT_TIMEOUT_SECONDS);
+    public static class MediaMeta {
+        private Integer width;
+        private Integer height;
+        private Integer durationSec;
+
+        public Integer getWidth() {
+            return width;
+        }
+
+        public void setWidth(Integer width) {
+            this.width = width;
+        }
+
+        public Integer getHeight() {
+            return height;
+        }
+
+        public void setHeight(Integer height) {
+            this.height = height;
+        }
+
+        public Integer getDurationSec() {
+            return durationSec;
+        }
+
+        public void setDurationSec(Integer durationSec) {
+            this.durationSec = durationSec;
+        }
     }
 
     /**
-     * 获取媒体文件元数据
-     *
-     * @param filePath      文件路径
-     * @param timeoutSeconds 超时时间（秒）
-     * @return 媒体元数据，失败返回 null
+     * 提取媒体元数据
      */
-    public MediaMeta getMediaMeta(String filePath, int timeoutSeconds) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            log.error("文件不存在: {}", filePath);
+    public static MediaMeta getMediaMetadata(File mediaFile) {
+        if (mediaFile == null || !mediaFile.exists()) {
+            log.warn("Media file does not exist: {}", mediaFile != null ? mediaFile.getAbsolutePath() : "null");
             return null;
         }
 
-        // 构建 FFprobe 命令
-        // -v quiet: 静默模式
-        // -print_format json: 输出 JSON 格式
-        // -show_format: 显示格式信息
-        // -show_streams: 显示流信息
-        List<String> command = new ArrayList<>();
-        command.add("ffprobe");
-        command.add("-v");
-        command.add("quiet");
-        command.add("-print_format");
-        command.add("json");
-        command.add("-show_format");
-        command.add("-show_streams");
-        command.add(filePath);
+        String[] command = {
+            "ffprobe",
+            "-v", "quiet",
+            "-print_format", "json",
+            "-show_format",
+            "-show_streams",
+            mediaFile.getAbsolutePath()
+        };
 
-        log.debug("执行 FFprobe 命令: {}", String.join(" ", command));
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true);
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            processBuilder.redirectErrorStream(true);
-
             Process process = processBuilder.start();
-
-            // 读取 JSON 输出
-            StringBuilder jsonOutput = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()))) {
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    jsonOutput.append(line).append("\n");
+                    output.append(line);
                 }
             }
 
-            // 等待进程完成
-            boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
+            boolean finished = process.waitFor(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
             if (!finished) {
+                log.error("FFprobe command timed out for file: {}", mediaFile.getName());
                 process.destroyForcibly();
-                log.error("FFprobe 超时: {}", filePath);
                 return null;
             }
 
             int exitCode = process.exitValue();
             if (exitCode != 0) {
-                log.error("FFprobe 执行失败，退出码: {}", exitCode);
+                log.error("FFprobe command failed with exit code {} for file: {}", exitCode, mediaFile.getName());
                 return null;
             }
 
-            // 解析 JSON
-            String json = jsonOutput.toString();
-            if (json.trim().isEmpty()) {
-                log.error("FFprobe 输出为空: {}", filePath);
-                return null;
-            }
-
-            return parseMediaMeta(json);
+            return parseFFprobeOutput(output.toString());
 
         } catch (Exception e) {
-            log.error("执行 FFprobe 命令时出错: {}", filePath, e);
+            log.error("Error executing FFprobe command for file {}: {}", mediaFile.getName(), e.getMessage(), e);
             return null;
         }
     }
 
-    /**
-     * 解析 FFprobe JSON 输出
-     *
-     * @param json JSON 字符串
-     * @return 媒体元数据
-     */
-    private MediaMeta parseMediaMeta(String json) {
+    private static MediaMeta parseFFprobeOutput(String jsonOutput) {
         try {
-            JsonNode root = objectMapper.readTree(json);
+            JsonNode root = objectMapper.readTree(jsonOutput);
+            MediaMeta meta = new MediaMeta();
 
-            Integer width = null;
-            Integer height = null;
-            Double duration = null;
+            // 解析 format 中的 duration
+            JsonNode format = root.get("format");
+            if (format != null && format.has("duration")) {
+                try {
+                    double duration = format.get("duration").asDouble();
+                    meta.setDurationSec((int) Math.round(duration));
+                } catch (Exception e) {
+                    log.warn("Failed to parse duration: {}", e.getMessage());
+                }
+            }
 
-            // 从 streams 中查找视频流，获取宽高
+            // 解析 streams 中的 width 和 height
             JsonNode streams = root.get("streams");
             if (streams != null && streams.isArray()) {
                 for (JsonNode stream : streams) {
-                    String codecType = stream.has("codec_type") 
-                        ? stream.get("codec_type").asText() 
-                        : null;
-                    
-                    if ("video".equals(codecType)) {
-                        if (width == null && stream.has("width")) {
-                            width = stream.get("width").asInt();
+                    if (stream.has("codec_type") && "video".equals(stream.get("codec_type").asText())) {
+                        if (stream.has("width")) {
+                            meta.setWidth(stream.get("width").asInt());
                         }
-                        if (height == null && stream.has("height")) {
-                            height = stream.get("height").asInt();
+                        if (stream.has("height")) {
+                            meta.setHeight(stream.get("height").asInt());
                         }
-                        // 找到视频流后可以继续查找时长，但通常从 format 获取更准确
+                        break;
                     }
                 }
             }
 
-            // 从 format 中获取时长
-            JsonNode format = root.get("format");
-            if (format != null && format.has("duration")) {
-                String durationStr = format.get("duration").asText();
-                if (durationStr != null && !durationStr.isEmpty()) {
-                    try {
-                        duration = Double.parseDouble(durationStr);
-                    } catch (NumberFormatException e) {
-                        log.warn("无法解析时长: {}", durationStr);
-                    }
-                }
-            }
-
-            // 如果 streams 中没有找到宽高，尝试从 format 的 tags 中获取
-            if ((width == null || height == null) && format != null) {
-                JsonNode tags = format.get("tags");
-                if (tags != null) {
-                    if (width == null && tags.has("width")) {
-                        try {
-                            width = Integer.parseInt(tags.get("width").asText());
-                        } catch (NumberFormatException ignored) {
-                        }
-                    }
-                    if (height == null && tags.has("height")) {
-                        try {
-                            height = Integer.parseInt(tags.get("height").asText());
-                        } catch (NumberFormatException ignored) {
-                        }
-                    }
-                }
-            }
-
-            Integer durationSec = null;
-            if (duration != null) {
-                durationSec = (int) Math.round(duration);
-            }
-
-            MediaMeta meta = new MediaMeta(width, height, durationSec);
-            log.debug("解析媒体元数据: width={}, height={}, duration={}s", width, height, durationSec);
             return meta;
-
         } catch (Exception e) {
-            log.error("解析 FFprobe JSON 输出失败", e);
+            log.error("Failed to parse FFprobe JSON output: {}", e.getMessage(), e);
             return null;
         }
     }
 
     /**
      * 检查 FFprobe 是否可用
-     *
-     * @return 是否可用
      */
-    public boolean isAvailable() {
+    public static boolean isAvailable() {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("ffprobe", "-version");
-            Process process = processBuilder.start();
-            boolean finished = process.waitFor(5, TimeUnit.SECONDS);
-            if (!finished) {
-                process.destroyForcibly();
-                return false;
-            }
-            return process.exitValue() == 0;
+            Process process = new ProcessBuilder("ffprobe", "-version").start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
         } catch (Exception e) {
-            log.warn("FFprobe 不可用", e);
+            log.warn("FFprobe is not available in PATH: {}", e.getMessage());
             return false;
         }
     }

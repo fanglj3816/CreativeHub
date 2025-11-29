@@ -10,4 +10,11 @@ public interface PostMediaRepository extends JpaRepository<PostMedia, Long> {
     List<PostMedia> findByPostId(Long postId);
 
     List<PostMedia> findByPostIdIn(Collection<Long> postIds);
+
+    /**
+     * 统计使用指定媒体文件的帖子数量
+     * @param mediaId 媒体文件 ID
+     * @return 使用该媒体的帖子数量
+     */
+    long countByMediaId(Long mediaId);
 }

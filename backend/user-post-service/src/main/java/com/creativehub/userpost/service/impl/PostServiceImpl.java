@@ -227,6 +227,43 @@ public class PostServiceImpl implements PostService {
         
         return author;
     }
+
+    @Override
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new PostNotFoundException(postId));
+
+        if (!Objects.equals(post.getAuthorId(), userId)) {
+            throw new PostServiceException(403, "无权删除该帖子");
+        }
+
+        // 删除关联的 PostMedia 记录
+        List<PostMedia> relations = postMediaRepository.findByPostId(postId);
+        postMediaRepository.deleteAll(relations);
+
+        // 找出该帖子使用的媒体文件 ID
+        Set<Long> mediaIds = relations.stream()
+            .map(PostMedia::getMediaId)
+            .collect(Collectors.toSet());
+
+        // 检查哪些媒体文件只被这个帖子使用（可以安全删除）
+        List<Long> needDeleteMediaIds = mediaIds.stream()
+            .filter(id -> postMediaRepository.countByMediaId(id) == 0L)
+            .toList();
+
+        // 删除不再被其他帖子使用的媒体文件
+        if (!needDeleteMediaIds.isEmpty()) {
+            try {
+                mediaClient.deleteMediaByIds(needDeleteMediaIds);
+            } catch (Exception ex) {
+                throw new RemoteServiceException("删除媒体文件失败", ex);
+            }
+        }
+
+        // 最后删除帖子本身
+        postRepository.delete(post);
+    }
 }
 
 

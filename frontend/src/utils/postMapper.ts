@@ -26,9 +26,12 @@ export const formatPostForFeedCard = (post: PostDTO) => {
   // 处理媒体列表：取第一个媒体作为主要媒体
   let media: {
     type: 'image' | 'video' | 'audio';
-    url: string;
+    url?: string | null;
     thumbnail?: string;
-    fileName?: string;
+    fileName?: string; // 音频文件名
+    status?: number; // 0=完成 1=处理中 2=失败
+    progress?: number; // 0~1
+    errorMsg?: string | null;
   } | undefined;
 
   if (post.mediaList && post.mediaList.length > 0) {
@@ -47,10 +50,13 @@ export const formatPostForFeedCard = (post: PostDTO) => {
       } else if (fileType === 'VIDEO') {
         media = {
           type: 'video',
-          url: firstMedia.url,
-          // 如果后端有单独的封面字段，可以在这里设置
-          // 目前后端没有封面字段，所以不设置 thumbnail
+          url: firstMedia.url || null,
+          // 不设置 thumbnail，让浏览器自动显示视频第一帧作为预览
+          // 如果后端将来提供单独的封面图，可以在这里设置
           thumbnail: undefined,
+          status: firstMedia.status,
+          progress: firstMedia.progress ? Number(firstMedia.progress) : undefined,
+          errorMsg: firstMedia.errorMsg || null,
         };
       } else if (fileType === 'AUDIO') {
         media = {

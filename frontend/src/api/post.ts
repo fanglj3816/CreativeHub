@@ -2,11 +2,14 @@ import api from './auth';
 
 export interface MediaItem {
   mediaId: number;
-  url: string;
+  url?: string | null;
   type: 'IMAGE' | 'VIDEO' | 'AUDIO';
   sortOrder: number;
   previewUrl?: string; // 本地预览 URL（用于上传前显示）
   fileName?: string; // 文件名
+  status?: number; // 0=完成 1=处理中 2=失败
+  progress?: number; // 0~1
+  errorMsg?: string | null;
 }
 
 export interface CreatePostRequest {
@@ -24,12 +27,15 @@ export interface CreatePostResponse {
 // 后端返回的数据结构
 export interface MediaDTO {
   id: number;
-  url: string;
+  url?: string | null;
   fileType: string; // 'IMAGE' | 'VIDEO' | 'AUDIO'
   width?: number;
   height?: number;
   durationSec?: number;
   displayName?: string; // 用于展示的名称
+  status?: number; // 0=完成 1=处理中 2=失败
+  progress?: number; // 0~1 (BigDecimal转number)
+  errorMsg?: string | null;
 }
 
 export interface AuthorDTO {
@@ -111,6 +117,12 @@ export const searchPosts = async (keyword: string): Promise<FeedResponse> => {
 // 获取帖子详情
 export const getPostDetail = async (id: number): Promise<PostDetailResponse> => {
   const response = await api.get<PostDetailResponse>(`/api/post/posts/${id}`);
+  return response.data;
+};
+
+// 删除帖子
+export const deletePost = async (id: number): Promise<{ code: number; message: string; data: null }> => {
+  const response = await api.delete<{ code: number; message: string; data: null }>(`/api/post/posts/${id}`);
   return response.data;
 };
 

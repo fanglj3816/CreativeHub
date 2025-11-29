@@ -9,6 +9,7 @@ import com.creativehub.userpost.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +67,14 @@ public class PostController {
             postPage.getSize(),
             postPage.getTotalElements());
         return ApiResponse.success(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deletePost(@PathVariable("id") Long id,
+                                        HttpServletRequest request) {
+        Long userId = jwtUserResolver.resolveUserId(request);
+        postService.deletePost(id, userId);
+        return ApiResponse.success(null);
     }
 }
 

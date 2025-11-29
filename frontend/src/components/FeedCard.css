@@ -113,9 +113,151 @@
 }
 
 .video-container {
-  position: relative;
   width: 100%;
-  background: transparent;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 500px;
+  min-height: 200px;
+  object-fit: contain;
+  background: var(--bg-secondary);
+  cursor: pointer;
+}
+
+.video-container video:not([poster]) {
+  /* 没有 poster 时，确保视频第一帧可见 */
+  background: linear-gradient(135deg, rgba(15, 20, 35, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* 视频转码中占位 - 扁平化设计 */
+.video-transcoding-placeholder {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.transcoding-content {
+  text-align: center;
+  color: var(--text-primary);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 280px;
+}
+
+.transcoding-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.transcoding-icon {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--text-accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.transcoding-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+.transcoding-progress {
+  width: 100%;
+}
+
+.transcoding-progress :global(.ant-progress-bg) {
+  background-color: var(--text-accent) !important;
+}
+
+.transcoding-progress :global(.ant-progress-inner) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.transcoding-progress :global(.ant-progress-text) {
+  color: var(--text-secondary) !important;
+  font-size: 12px !important;
+}
+
+/* 视频转码失败占位 - 扁平化设计 */
+.video-error-placeholder {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.error-content {
+  text-align: center;
+  color: var(--text-primary);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 280px;
+}
+
+.error-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 77, 79, 0.1);
+  border-radius: 50%;
+  color: #ff4d4f;
+}
+
+.error-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.error-text {
+  font-size: 14px;
+  color: #ff4d4f;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+}
+
+.error-msg {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  max-width: 300px;
+  word-break: break-word;
 }
 
 .audio-container {
@@ -133,12 +275,39 @@
 .card-footer {
   border-top: 1px solid var(--border-color);
   padding-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .card-actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+}
+
+.card-more {
+  margin-left: auto;
+}
+
+.more-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.more-btn:hover {
+  border-color: var(--border-color-hover);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
 }
 
 .action-btn {

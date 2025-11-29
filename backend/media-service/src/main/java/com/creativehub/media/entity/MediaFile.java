@@ -31,6 +31,12 @@ public class MediaFile {
 
     private Integer status;
 
+    @Column(name = "progress", precision = 5, scale = 4)
+    private java.math.BigDecimal progress;
+
+    @Column(name = "error_msg", length = 500)
+    private String errorMsg;
+
     private String md5;
 
     @Column(name = "original_name", length = 255)
@@ -141,6 +147,22 @@ public class MediaFile {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public java.math.BigDecimal getProgress() {
+        return progress;
+    }
+
+    public void setProgress(java.math.BigDecimal progress) {
+        this.progress = progress;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 
     public String getMd5() {

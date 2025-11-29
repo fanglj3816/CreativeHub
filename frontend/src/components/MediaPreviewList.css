@@ -61,6 +61,7 @@
 
 .media-preview-content {
   width: 100%;
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,24 +69,13 @@
   background: var(--bg-secondary);
 }
 
-/* 图片容器保持正方形 */
-.media-preview-content.image-content {
-  aspect-ratio: 1;
-}
-
-/* 视频容器保持 16:9 比例 */
-.media-preview-content.video-content {
-  aspect-ratio: 16 / 9;
-  padding: 0;
-  background: transparent;
-}
-
-.media-preview-content.video-content :global(.video-player-wrapper) {
+.preview-image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
-.preview-image {
+.preview-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -120,6 +110,128 @@
   color: var(--text-tertiary);
   font-size: 14px;
   background: var(--bg-secondary);
+}
+
+/* 视频转码中占位 - 扁平化设计 */
+.video-transcoding-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.transcoding-content {
+  text-align: center;
+  color: var(--text-primary);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 280px;
+}
+
+.transcoding-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.transcoding-icon {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--text-accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.transcoding-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+.transcoding-progress {
+  width: 100%;
+}
+
+.transcoding-progress :global(.ant-progress-bg) {
+  background-color: var(--text-accent) !important;
+}
+
+.transcoding-progress :global(.ant-progress-inner) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.transcoding-progress :global(.ant-progress-text) {
+  color: var(--text-secondary) !important;
+  font-size: 12px !important;
+}
+
+/* 视频转码失败占位 - 扁平化设计 */
+.video-error-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.error-content {
+  text-align: center;
+  color: var(--text-primary);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 280px;
+}
+
+.error-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 77, 79, 0.1);
+  border-radius: 50%;
+  color: #ff4d4f;
+}
+
+.error-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.error-text {
+  font-size: 14px;
+  color: #ff4d4f;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+}
+
+.error-msg {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  max-width: 300px;
+  word-break: break-word;
 }
 
 .delete-btn {

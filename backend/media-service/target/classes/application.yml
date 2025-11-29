@@ -1,6 +1,16 @@
 spring:
   application:
     name: media-service
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:123456}
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
   datasource:
     url: ${MEDIA_DB_URL:jdbc:mysql://localhost:3306/creativehub_user?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true}
     username: ${MEDIA_DB_USERNAME:root}
@@ -15,8 +25,8 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   servlet:
     multipart:
-      max-file-size: 64MB  # 单个文件最大 64MB
-      max-request-size: 64MB  # 整个请求最大 64MB
+      max-file-size: 300MB  # 单个文件最大 64MB
+      max-request-size: 300MB  # 整个请求最大 64MB
   cloud:
     nacos:
       discovery:
@@ -44,3 +54,9 @@ minio:
   access-key: ${MINIO_ACCESS_KEY:creativehub}
   secret-key: ${MINIO_SECRET_KEY:CreativeHub@123}
   bucket: ${MINIO_BUCKET:creativehub-media}
+
+rabbitmq:
+  host: ${RABBITMQ_HOST:localhost}
+  port: ${RABBITMQ_PORT:5672}
+  username: ${RABBITMQ_USERNAME:admin}
+  password: ${RABBITMQ_PASSWORD:123456}

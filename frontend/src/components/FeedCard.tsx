@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Dropdown, App, Progress } from 'antd';
+import type { MenuProps } from 'antd';
+import { MoreOutlined } from '@ant-design/icons';
 import AudioPlayer from './AudioPlayer';
 import VideoPlayer from './VideoPlayer';
+import { deletePost } from '../api/post';
 import './FeedCard.css';
 
 // 默认头像组件（使用 IconPark Me 图标，符合系统 UI）
@@ -35,9 +39,12 @@ interface FeedCardProps {
     text?: string;
     media?: {
       type: 'image' | 'video' | 'audio';
-      url: string;
+      url?: string | null;
       thumbnail?: string;
       fileName?: string; // 音频文件名
+      status?: number; // 0=完成 1=处理中 2=失败
+      progress?: number; // 0~1
+      errorMsg?: string | null;
     };
   };
   stats: {
@@ -47,10 +54,12 @@ interface FeedCardProps {
   };
   timestamp: string;
   onClick?: () => void; // 可选的点击处理函数
+  onDeleted?: (id: number) => void; // 删除回调
 }
 
-const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timestamp, onClick }) => {
+const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timestamp, onClick, onDeleted }) => {
   const navigate = useNavigate();
+  const { modal, message } = App.useApp();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(stats.likes);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -68,7 +77,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
   const handleCardClick = (e: React.MouseEvent) => {
     // 如果点击的是按钮或链接，不触发卡片点击
     const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('a')) {
+    if (target.closest('button') || target.closest('a') || target.closest('.ant-dropdown')) {
       return;
     }
     if (onClick) {
@@ -77,6 +86,38 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
       navigate(`/post/${id}`);
     }
   };
+
+  const handleDelete = () => {
+    modal.confirm({
+      title: '删除帖子',
+      content: '确认要删除这个帖子吗？相关媒体也会一并删除。',
+      okText: '删除',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deletePost(id);
+          message.success('删除成功');
+          onDeleted?.(id);
+        } catch (e) {
+          console.error('删除帖子失败', e);
+          message.error('删除失败，请稍后重试');
+        }
+      },
+    });
+  };
+
+  const menuItems: MenuProps['items'] = [
+    {
+      key: 'delete',
+      label: '删除帖子',
+      danger: true,
+      onClick: (e) => {
+        e.domEvent.stopPropagation();
+        handleDelete();
+      },
+    },
+  ];
 
   const renderMedia = () => {
     if (!content.media) return null;
@@ -117,15 +158,90 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
           </div>
         );
       case 'video':
+        const videoStatus = content.media.status ?? 0;
+        const videoProgress = content.media.progress;
+        const videoUrl = content.media.url;
+        const posterUrl = content.media.thumbnail && 
+                          content.media.thumbnail.trim() !== '' && 
+                          content.media.thumbnail !== videoUrl
+                          ? content.media.thumbnail
+                          : undefined;
+
+        // 转码中
+        if (videoStatus === 1) {
+          return (
+            <div className="media-container video-container">
+              <div className="video-transcoding-placeholder">
+                <div className="transcoding-content">
+                  <div className="transcoding-icon-wrapper">
+                    <div className="transcoding-icon"></div>
+                  </div>
+                  <div className="transcoding-text">视频转码中</div>
+                  <Progress
+                    percent={videoProgress !== undefined && videoProgress !== null ? Math.round(videoProgress * 100) : 0}
+                    status="active"
+                    strokeColor="#00d4ff"
+                    showInfo={true}
+                    className="transcoding-progress"
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // 转码失败
+        if (videoStatus === 2) {
+          return (
+            <div className="media-container video-container">
+              <div className="video-error-placeholder">
+                <div className="error-content">
+                  <div className="error-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M10 6V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M10 14H10.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="error-text">视频处理失败</div>
+                  {content.media.errorMsg && (
+                    <div className="error-msg">{content.media.errorMsg}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // 转码完成：显示视频播放器
+        if (videoUrl) {
+          return (
+            <div className="media-container video-container">
+              <VideoPlayer url={videoUrl} poster={posterUrl} />
+            </div>
+          );
+        }
+
+        // URL为空的情况
         return (
           <div className="media-container video-container">
-            <VideoPlayer 
-              url={content.media.url} 
-              poster={content.media.thumbnail}
-            />
+            <div className="video-error-placeholder">
+              <div className="error-content">
+                <div className="error-text">视频地址无效</div>
+              </div>
+            </div>
           </div>
         );
       case 'audio':
+        if (!content.media.url) {
+          return (
+            <div className="media-container audio-container">
+              <div className="preview-error">
+                <span>音频地址无效</span>
+              </div>
+            </div>
+          );
+        }
         return (
           <div className="media-container audio-container">
             <AudioPlayer url={content.media.url} fileName={content.media.fileName} />
@@ -269,6 +385,18 @@ const FeedCard: React.FC<FeedCardProps> = ({ id, author, content, stats, timesta
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
             </svg>
           </button>
+        </div>
+
+        <div className="card-more">
+          <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+            <button
+              className="more-btn"
+              onClick={(e) => e.stopPropagation()}
+              aria-label="更多操作"
+            >
+              <MoreOutlined />
+            </button>
+          </Dropdown>
         </div>
       </div>
     </article>

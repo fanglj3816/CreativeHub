@@ -12,6 +12,9 @@ public class MediaDTO {
     private Integer height;
     private Integer durationSec;
     private String displayName;
+    private Integer status; // 0=完成 1=处理中 2=失败
+    private java.math.BigDecimal progress; // 转码进度 0~1
+    private String errorMsg; // 转码失败原因
 
     public Long getId() {
         return id;
@@ -68,7 +71,32 @@ public class MediaDTO {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public java.math.BigDecimal getProgress() {
+        return progress;
+    }
+
+    public void setProgress(java.math.BigDecimal progress) {
+        this.progress = progress;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 }
+
 
 
 

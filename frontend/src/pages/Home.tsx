@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, Spin, App, Tooltip } from 'antd';
+import { Input, Spin, App, Tooltip } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
 import FeedCard from '../components/FeedCard';
@@ -197,20 +197,19 @@ const Home = () => {
     <MainLayout>
       <div className="home-page">
         <div className="home-top-bar">
-          <div className="home-search-wrapper">
+          <div className="search-wrapper">
             <Tooltip title="可以发帖子" placement="bottom">
               <button
                 className="search-add-btn"
                 onClick={() => navigate('/create-post')}
-                aria-label="发布作品"
+                aria-label="发布帖子"
               >
                 <PlusOutlined />
               </button>
             </Tooltip>
             <Input
               className="home-search-input"
-              placeholder="询问任何问题"
-              allowClear
+              placeholder="搜索作品、用户..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
@@ -240,7 +239,15 @@ const Home = () => {
           {/* 真实帖子数据 */}
           {!loading && realPosts.map((post) => {
             const feedCardData = formatPostForFeedCard(post);
-            return <FeedCard key={`real-${post.id}`} {...feedCardData} />;
+            return (
+              <FeedCard
+                key={`real-${post.id}`}
+                {...feedCardData}
+                onDeleted={(deletedId) => {
+                  setRealPosts((prev) => prev.filter((p) => p.id !== deletedId));
+                }}
+              />
+            );
           })}
 
           {/* 假数据（始终显示在真实数据下方） */}
