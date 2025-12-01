@@ -189,7 +189,6 @@ public class MediaTranscodeConsumer {
         }
     }
 
-    @Transactional
     private void updateProgress(Long mediaId, BigDecimal progress) {
         try {
             MediaFile mediaFile = mediaFileRepository.findById(mediaId).orElse(null);

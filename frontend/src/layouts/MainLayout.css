@@ -11,8 +11,11 @@
 
 .main-content {
   overflow-y: auto;
+  overflow-x: hidden;
   padding: var(--spacing-lg);
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 响应式设计 */

@@ -1,0 +1,37 @@
+@import '../../styles/theme.css';
+
+.home-right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: fit-content;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 320px;
+  box-sizing: border-box;
+}
+
+/* 完全隐藏滚动条但保持滚动功能 */
+.home-right-sidebar::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.home-right-sidebar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .home-right-sidebar {
+    display: none;
+  }
+}
+

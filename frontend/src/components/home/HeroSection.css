@@ -1,0 +1,150 @@
+@import '../../styles/theme.css';
+
+.hero-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-left {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-right {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.hero-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-xs);
+}
+
+.hero-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: 12px;
+  font-weight: 500;
+  min-height: 52px;
+  justify-content: center;
+}
+
+.hero-action-btn:hover {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 20px var(--glow-color);
+  transform: translateY(-4px);
+}
+
+.hero-action-btn:active {
+  transform: translateY(-2px);
+}
+
+.action-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text-accent);
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.action-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .hero-title {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: 18px;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .hero-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  .hero-action-btn {
+    padding: var(--spacing-xs);
+    font-size: 11px;
+    min-height: 48px;
+  }
+
+  .action-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .action-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+

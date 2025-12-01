@@ -5,16 +5,17 @@ import './MainLayout.css';
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  hideRightPanel?: boolean; // 控制是否隐藏右侧栏
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, hideRightPanel = false }) => {
   return (
     <div className="main-layout">
       <LeftSidebar />
       <main className="main-content">
         {children}
       </main>
-      <RightPanel />
+      {!hideRightPanel && <RightPanel />}
     </div>
   );
 };
