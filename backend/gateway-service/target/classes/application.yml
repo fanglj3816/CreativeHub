@@ -24,6 +24,12 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      # 文件上传大小限制配置（WebFlux）
+      codec:
+        max-in-memory-size: 300MB  # 最大内存缓冲区大小
+      httpclient:
+        max-header-size: 64KB
+        max-connections: 1000
       routes:
         # Auth Service 路由
         - id: auth-service

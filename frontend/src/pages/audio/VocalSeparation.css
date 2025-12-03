@@ -1,0 +1,426 @@
+@import '../../styles/theme.css';
+
+.vocal-separation-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* 头部样式 */
+.vocal-separation-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.back-btn {
+  color: var(--text-secondary);
+  font-size: 16px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  color: var(--text-accent);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.header-content {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* 上传区域 */
+.upload-section {
+  padding: var(--spacing-xl);
+}
+
+.upload-area {
+  margin-bottom: var(--spacing-lg);
+}
+
+.upload-component {
+  width: 100%;
+}
+
+.upload-drag-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.upload-drag-area:hover {
+  border-color: var(--text-accent);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.upload-icon {
+  font-size: 48px;
+  color: var(--text-accent);
+  margin-bottom: var(--spacing-md);
+}
+
+.upload-text {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-weight: 500;
+}
+
+.upload-hint {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.uploaded-file-info {
+  padding: var(--spacing-md);
+  background: rgba(0, 212, 255, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.file-info-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.file-info-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.file-info-value {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 参数区域 */
+.params-section {
+  padding: var(--spacing-xl);
+}
+
+.params-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.params-description {
+  margin-bottom: var(--spacing-md);
+}
+
+.params-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.params-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.params-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.param-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.param-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.param-select {
+  width: 100%;
+}
+
+.param-select :global(.ant-select-selector) {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.param-select :global(.ant-select-selector:hover) {
+  border-color: var(--border-color-hover) !important;
+}
+
+.param-select :global(.ant-select-focused .ant-select-selector) {
+  border-color: var(--text-accent) !important;
+  box-shadow: 0 0 10px var(--glow-color) !important;
+}
+
+.param-select :global(.ant-select-selection-item) {
+  color: var(--text-primary) !important;
+}
+
+.param-select :global(.ant-select-arrow) {
+  color: var(--text-secondary) !important;
+}
+
+/* 操作按钮 */
+.action-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.start-btn {
+  width: 200px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--text-accent) 0%, #0099cc 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  transition: all var(--transition-base);
+}
+
+.start-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #00e5ff 0%, var(--text-accent) 100%);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 进度区域 */
+.progress-section {
+  padding: var(--spacing-xl);
+}
+
+.progress-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-0 {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.status-1 {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--text-accent);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+}
+
+.status-2 {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.status-3 {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.4);
+}
+
+.progress-bar {
+  margin: var(--spacing-md) 0;
+}
+
+.progress-bar :global(.ant-progress-bg) {
+  background: linear-gradient(90deg, var(--text-accent) 0%, #0099cc 100%) !important;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: var(--radius-md);
+  color: #f44336;
+  font-size: 14px;
+}
+
+.error-icon {
+  font-size: 18px;
+}
+
+/* 结果区域 */
+.results-section {
+  margin-top: var(--spacing-lg);
+}
+
+.results-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.result-card {
+  padding: var(--spacing-lg);
+}
+
+.result-card-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.result-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.result-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.download-btn {
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(135deg, var(--text-accent) 0%, #0099cc 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-weight: 500;
+  box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+  transition: all var(--transition-base);
+}
+
+.download-btn:hover {
+  background: linear-gradient(135deg, #00e5ff 0%, var(--text-accent) 100%);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Ant Design Card 样式覆盖 */
+.card-base :global(.ant-card-body) {
+  padding: 0;
+}
+
+.upload-section :global(.ant-card-body),
+.params-section :global(.ant-card-body),
+.progress-section :global(.ant-card-body),
+.result-card :global(.ant-card-body) {
+  padding: var(--spacing-xl);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .vocal-separation-page {
+    padding: var(--spacing-md);
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .params-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .start-btn {
+    width: 100%;
+  }
+
+  .upload-drag-area {
+    padding: var(--spacing-lg);
+  }
+
+  .upload-icon {
+    font-size: 36px;
+  }
+}
+
+
+
+
+

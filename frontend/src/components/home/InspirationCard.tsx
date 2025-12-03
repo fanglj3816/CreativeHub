@@ -33,3 +33,7 @@ const InspirationCard: React.FC<InspirationCardProps> = ({ inspirations }) => {
 export default InspirationCard;
 
 
+
+
+
+

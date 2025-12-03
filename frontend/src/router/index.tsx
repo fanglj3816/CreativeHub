@@ -3,6 +3,8 @@ import AuthPage from '../pages/AuthPage';
 import Home from '../pages/Home';
 import CreatePost from '../pages/CreatePost';
 import PostDetail from '../pages/PostDetail';
+import VocalSeparation from '../pages/audio/VocalSeparation';
+import AudioSeparationPage from '../pages/audio/AudioSeparationPage';
 
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -43,6 +45,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <PostDetail />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/audio/vocal-separation',
+    element: (
+      <ProtectedRoute>
+        <VocalSeparation />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/audio/tools/separation',
+    element: (
+      <ProtectedRoute>
+        <AudioSeparationPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/audio/tools/vocal-separation',
+    element: (
+      <ProtectedRoute>
+        <AudioSeparationPage />
       </ProtectedRoute>
     ),
   },

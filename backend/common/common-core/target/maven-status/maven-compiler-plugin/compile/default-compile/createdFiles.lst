@@ -2,4 +2,5 @@ com/creativehub/common/core/dto/PageResponse.class
 com/creativehub/common/core/exception/BusinessException.class
 com/creativehub/common/core/dto/MediaDTO.class
 com/creativehub/common/core/dto/ApiResponse.class
+com/creativehub/common/core/enums/TaskType.class
 com/creativehub/common/core/exception/UnauthorizedException.class

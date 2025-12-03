@@ -1,24 +1,29 @@
 spring:
   application:
     name: ai-service-client
+  config:
+    import: optional:nacos:${spring.application.name}.yml
   cloud:
     nacos:
       discovery:
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
-        namespace: ${NACOS_NAMESPACE:}
-        group: ${NACOS_GROUP:DEFAULT_GROUP}
-        enabled: true
-        register-enabled: true
-        metadata:
-          version: 1.0.0
+        server-addr: localhost:8848
+        enabled: true  # 启用服务发现，注册到 Nacos
       config:
-        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
-        namespace: ${NACOS_NAMESPACE:}
-        group: ${NACOS_GROUP:DEFAULT_GROUP}
-        file-extension: yml
-        enabled: false
-        import-check:
-          enabled: false
+        server-addr: localhost:8848
+        enabled: false  # 如果不需要配置中心，可以禁用
+
+  # 文件上传大小限制
+  servlet:
+    multipart:
+      max-file-size: 300MB  # 单个文件最大 300MB
+      max-request-size: 300MB  # 整个请求最大 300MB
 
 server:
-  port: 0  # 随机端口，由 Nacos 自动分配
+  port: 0  # 随机端口，后续自行调整
+
+
+
+# AI 服务配置
+ai:
+  service:
+    base-url: http://localhost:8001

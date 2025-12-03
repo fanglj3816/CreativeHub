@@ -1,1 +1,9 @@
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/controller/AudioAiController.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/service/AudioAiService.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/client/config/AudioAiServiceProperties.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/example/AudioAiServiceUsageExample.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/client/util/MultipartInputStreamFileResource.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/client/config/RestClientConfig.java
 /Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/AiServiceClientApplication.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/client/AudioAiClient.java
+/Users/fangliangjun/MyProject/CreativeHub/backend/ai-service-client/src/main/java/com/creativehub/aiclient/client/exception/AudioServiceCallException.java

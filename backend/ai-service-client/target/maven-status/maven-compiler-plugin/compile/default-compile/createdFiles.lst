@@ -1,1 +1,9 @@
+com/creativehub/aiclient/client/config/AudioAiServiceProperties.class
+com/creativehub/aiclient/service/AudioAiService.class
+com/creativehub/aiclient/client/AudioAiClient.class
+com/creativehub/aiclient/client/config/RestClientConfig.class
+com/creativehub/aiclient/example/AudioAiServiceUsageExample.class
+com/creativehub/aiclient/client/exception/AudioServiceCallException.class
 com/creativehub/aiclient/AiServiceClientApplication.class
+com/creativehub/aiclient/client/util/MultipartInputStreamFileResource.class
+com/creativehub/aiclient/controller/AudioAiController.class
