@@ -158,6 +158,7 @@ def _run_demucs_separation(input_path: Path, output_dir: Path, model_name: str) 
         config.DEMUCS_CMD,
         "-n",
         model_name,
+        "--flac",
         str(input_path),
         "-o",
         str(output_dir),
@@ -221,6 +222,25 @@ def _upload_results_to_minio(output_dir: Path, job_id: str) -> List[str]:
         result_urls.append(url)
 
     return result_urls
+
+
+def _cleanup_local_files(input_path: Path, output_dir: Path, job_id: str) -> None:
+    """删除本次任务的本地输入文件和输出目录（jobId 目录）。"""
+    # 删除下载的原始音频文件
+    try:
+        if input_path.exists():
+            input_path.unlink()
+            logger.info("Deleted local input file for job %s: %s", job_id, input_path)
+    except Exception as exc:
+        logger.warning("Failed to delete input file for job %s: %s", job_id, exc)
+
+    # 删除 4/6 轨分离的输出目录（以 jobId 命名）
+    try:
+        if output_dir.exists():
+            shutil.rmtree(output_dir)
+            logger.info("Deleted local output dir for job %s: %s", job_id, output_dir)
+    except Exception as exc:
+        logger.warning("Failed to delete output dir for job %s: %s", job_id, exc)
 
 
 def _guess_stem_from_name(name: str) -> str:
@@ -329,6 +349,9 @@ async def separate_vocal_from_url(req: SeparationRequest) -> SeparationResponse:
     # 上传完成，更新进度到 95%
     update_task_progress(task_id, 95, "upload finished")
     
+    # 清理本次任务在本地的文件
+    _cleanup_local_files(input_path, output_dir, job_id)
+
     logger.info("Vocal separation finished: jobId=%s, results=%d", job_id, len(result_urls))
 
     return _build_separation_response(req, job_id, result_urls)
@@ -360,6 +383,9 @@ async def separate_demucs4_from_url(req: SeparationRequest) -> SeparationRespons
     # 上传完成，更新进度到 95%
     update_task_progress(task_id, 95, "upload finished")
     
+    # 清理本次任务在本地的文件
+    _cleanup_local_files(input_path, output_dir, job_id)
+
     logger.info("Demucs4 separation finished: jobId=%s, results=%d", job_id, len(result_urls))
 
     return _build_separation_response(req, job_id, result_urls)
@@ -391,6 +417,9 @@ async def separate_demucs6_from_url(req: SeparationRequest) -> SeparationRespons
     # 上传完成，更新进度到 95%
     update_task_progress(task_id, 95, "upload finished")
     
+    # 清理本次任务在本地的文件
+    _cleanup_local_files(input_path, output_dir, job_id)
+
     logger.info("Demucs6 separation finished: jobId=%s, results=%d", job_id, len(result_urls))
 
     return _build_separation_response(req, job_id, result_urls)
