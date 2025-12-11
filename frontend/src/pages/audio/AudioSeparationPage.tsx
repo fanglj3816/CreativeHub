@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Progress, message, Card, Select, Collapse } from 'antd';
-import { DownloadOutlined, ArrowLeftOutlined, UploadOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownloadOutlined, ArrowLeftOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../layouts/MainLayout';
 import AudioPlayer from '../../components/AudioPlayer';
 import {
-  uploadAndSeparateVocal,
-  uploadAndSeparateDemucs4,
-  uploadAndSeparateDemucs6,
+  separateVocal,
+  separateDemucs4,
+  separateDemucs6,
+  getTaskStatus,
   type TrackInfo,
-  type SeparationOptions,
+  type TaskStatusResponse,
 } from '../../api/audio';
 import { uploadMedia, type MediaDTO } from '../../api/media';
 import './AudioSeparation.css';
@@ -34,19 +35,17 @@ const AudioSeparationPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<number>(0);
   const [tracks, setTracks] = useState<TrackInfo[]>([]);
-  const [fileDuration, setFileDuration] = useState<string>('');
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [taskId, setTaskId] = useState<number | null>(null); // 任务ID
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isSubmittingRef = useRef<boolean>(false); // 防止重复提交
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 清理定时器
   useEffect(() => {
     return () => {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
+      stopPolling();
     };
   }, []);
 
@@ -57,25 +56,6 @@ const AudioSeparationPage: React.FC = () => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  // 获取音频时长（模拟）
-  const getAudioDuration = (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const audio = new Audio();
-      const url = URL.createObjectURL(file);
-      audio.src = url;
-      audio.addEventListener('loadedmetadata', () => {
-        const duration = audio.duration;
-        const minutes = Math.floor(duration / 60);
-        const seconds = Math.floor(duration % 60);
-        URL.revokeObjectURL(url);
-        resolve(`${minutes}分${seconds}秒`);
-      });
-      audio.addEventListener('error', () => {
-        URL.revokeObjectURL(url);
-        resolve('约 3 分钟'); // 默认值
-      });
-    });
-  };
 
   // 处理文件上传
   const handleFileUpload = async (selectedFile: File) => {
@@ -106,10 +86,6 @@ const AudioSeparationPage: React.FC = () => {
       setFile(selectedFile);
       setMediaDTO(media);
       setTracks([]); // 清空之前的结果
-
-      // 获取音频时长
-      const duration = await getAudioDuration(selectedFile);
-      setFileDuration(duration);
       
       // 清空 input 的 value，防止重复触发
       if (fileInputRef.current) {
@@ -171,34 +147,120 @@ const AudioSeparationPage: React.FC = () => {
   const handleDeleteFile = () => {
     setFile(null);
     setMediaDTO(null);
-    setFileDuration('');
     setTracks([]);
     message.info('已清除文件，可以重新上传');
   };
 
-  // 模拟进度更新
-  const simulateProgress = () => {
-    setProgress(0);
+  // 停止轮询
+  const stopPolling = () => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
     }
+  };
 
+  // 开始轮询任务状态
+  const startPolling = (currentTaskId: number) => {
+    // 先清除之前的轮询
+    stopPolling();
+
+    // 立即查询一次
+    pollTaskStatus(currentTaskId);
+
+    // 每 1 秒轮询一次
     progressIntervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) {
-          if (progressIntervalRef.current) {
-            clearInterval(progressIntervalRef.current);
+      pollTaskStatus(currentTaskId);
+    }, 1000);
+  };
+
+  // 轮询任务状态
+  const pollTaskStatus = async (currentTaskId: number) => {
+    try {
+      const statusResponse: TaskStatusResponse = await getTaskStatus(currentTaskId);
+      
+      // 更新进度
+      setProgress(statusResponse.progress || 0);
+
+      // 根据状态处理
+      if (statusResponse.status === 'SUCCESS') {
+        // 任务成功，停止轮询
+        stopPolling();
+        setLoading(false);
+        isSubmittingRef.current = false;
+
+        // 根据分离模式解析结果
+        const resultTracks: TrackInfo[] = [];
+        
+        if (mode === 'vocal') {
+          // 人声分离：vocalUrl 和 instUrl
+          if (statusResponse.vocalUrl) {
+            resultTracks.push({
+              name: 'Vocal',
+              url: statusResponse.vocalUrl,
+              description: '人声',
+            });
           }
-          return 95; // 等待 API 返回
+          if (statusResponse.instUrl) {
+            resultTracks.push({
+              name: 'Instrumental',
+              url: statusResponse.instUrl,
+              description: '伴奏',
+            });
+          }
+        } else if (mode === 'demucs4') {
+          // 4 轨分离：trackUrls
+          const trackNames = ['Vocal', 'Drums', 'Bass', 'Other'];
+          const trackDescriptions = ['人声', '鼓', '贝斯', '其他'];
+          if (statusResponse.trackUrls && statusResponse.trackUrls.length > 0) {
+            statusResponse.trackUrls.forEach((url, index) => {
+              resultTracks.push({
+                name: trackNames[index] || `Track ${index + 1}`,
+                url: url,
+                description: trackDescriptions[index] || '',
+              });
+            });
+          }
+        } else if (mode === 'demucs6') {
+          // 6 轨分离：trackUrls
+          const trackNames = ['Vocal', 'Drums', 'Bass', 'Other', 'Piano', 'Guitar'];
+          const trackDescriptions = ['人声', '鼓', '贝斯', '其他', '钢琴', '吉他'];
+          if (statusResponse.trackUrls && statusResponse.trackUrls.length > 0) {
+            statusResponse.trackUrls.forEach((url, index) => {
+              resultTracks.push({
+                name: trackNames[index] || `Track ${index + 1}`,
+                url: url,
+                description: trackDescriptions[index] || '',
+              });
+            });
+          }
         }
-        return prev + Math.random() * 5;
-      });
-    }, 500);
+
+        setTracks(resultTracks);
+        message.success('分离完成！');
+      } else if (statusResponse.status === 'FAILED') {
+        // 任务失败，停止轮询
+        stopPolling();
+        setLoading(false);
+        isSubmittingRef.current = false;
+        message.error(statusResponse.errorMsg || '任务处理失败');
+      }
+      // PROCESSING 和 PENDING 状态继续轮询，只更新进度
+    } catch (error: any) {
+      console.error('查询任务状态失败:', error);
+      // 网络错误时不停止轮询，继续尝试
+      // 如果是 404 等严重错误，可以考虑停止轮询
+      if (error.response?.status === 404) {
+        stopPolling();
+        setLoading(false);
+        isSubmittingRef.current = false;
+        message.error('任务不存在');
+      }
+    }
   };
 
   // 开始分离
   const handleStartSeparation = async () => {
-    if (!file) {
+    if (!mediaDTO || !mediaDTO.id) {
       message.warning('请先上传音频文件');
       return;
     }
@@ -212,49 +274,42 @@ const AudioSeparationPage: React.FC = () => {
     setLoading(true);
     setProgress(0);
     setTracks([]);
-    simulateProgress();
+    setTaskId(null);
+    // 清除之前的轮询
+    stopPolling();
 
     try {
-      const options: SeparationOptions = {
-        outputFormat,
-        ...(mode === 'vocal' && { model: modelName }),
-      };
-
+      const mediaId = mediaDTO.id;
       let response;
+
+      // 根据分离模式调用不同的接口
       if (mode === 'vocal') {
-        response = await uploadAndSeparateVocal(file, options);
+        response = await separateVocal(mediaId);
       } else if (mode === 'demucs4') {
-        response = await uploadAndSeparateDemucs4(file, options);
+        response = await separateDemucs4(mediaId);
       } else {
-        response = await uploadAndSeparateDemucs6(file, options);
+        response = await separateDemucs6(mediaId);
       }
 
-      // 停止进度模拟
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
-      setProgress(100);
-
-      if (response.code === 0 && response.data.tracks) {
-        setTracks(response.data.tracks);
-        message.success('分离完成！');
+      if (response.code === 0 && response.taskId) {
+        // 保存 taskId，后续用于轮询
+        setTaskId(response.taskId);
+        message.success('任务已创建，正在处理中...');
+        // 开始轮询任务状态
+        startPolling(response.taskId);
       } else {
-        message.error(response.message || '分离失败');
-        // 使用模拟数据
-        setTracks(getMockTracks(mode));
+        message.error(response.message || '创建任务失败');
+        setLoading(false);
+        isSubmittingRef.current = false;
       }
     } catch (error: any) {
       console.error('分离失败:', error);
-      message.error(error.message || '分离失败，请重试');
-      // 使用模拟数据
-      setTracks(getMockTracks(mode));
-    } finally {
+      message.error(error.response?.data?.message || error.message || '创建任务失败，请重试');
       setLoading(false);
-      isSubmittingRef.current = false; // 重置提交状态
+      isSubmittingRef.current = false;
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
       }
-      setProgress(100);
     }
   };
 
@@ -363,12 +418,6 @@ const AudioSeparationPage: React.FC = () => {
                   <span className="file-info-label">大小：</span>
                   <span className="file-info-value">{formatFileSize(file.size)}</span>
                 </div>
-                {fileDuration && (
-                  <div className="file-info-item">
-                    <span className="file-info-label">时长：</span>
-                    <span className="file-info-value">{fileDuration}</span>
-                  </div>
-                )}
                 {mediaDTO && (
                   <div className="file-info-item">
                     <span className="file-info-label">上传状态：</span>
@@ -474,16 +523,16 @@ const AudioSeparationPage: React.FC = () => {
 
         {/* 操作按钮和进度 */}
         <div className="action-section">
-          <Button
-            type="primary"
-            size="large"
-            onClick={handleStartSeparation}
-            disabled={!file || loading}
-            className="start-btn"
-            loading={loading}
-          >
-            {loading ? '处理中...' : '开始分离'}
-          </Button>
+                 <Button
+                   type="primary"
+                   size="large"
+                   onClick={handleStartSeparation}
+                   disabled={!mediaDTO || !mediaDTO.id || loading}
+                   className="start-btn"
+                   loading={loading}
+                 >
+                   {loading ? '处理中...' : '开始分离'}
+                 </Button>
         </div>
 
         {loading && (

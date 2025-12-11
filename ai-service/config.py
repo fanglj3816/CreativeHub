@@ -1,4 +1,5 @@
 # config.py
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -26,3 +27,19 @@ DEMUCS_CMD = f"{BIN_DIR}/demucs"
 # Demucs 模型名
 DEMUCS_MODEL_4 = "htdemucs"      # 4轨
 DEMUCS_MODEL_6 = "htdemucs_6s"   # 6轨
+
+# -------------------------
+# MinIO 配置
+# -------------------------
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "creativehub")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "CreativeHub@123")
+MINIO_BUCKET = os.getenv("MINIO_BUCKET", "creativehub-media")
+
+# -------------------------
+# Java 服务回调配置
+# 注意：应该通过 Gateway 访问，而不是直接访问 Java 服务
+# Gateway 端口：8000
+# -------------------------
+JAVA_SERVICE_BASE_URL = os.getenv("JAVA_SERVICE_BASE_URL", "http://localhost:8000")
+JAVA_BACKEND_BASE_URL = os.getenv("JAVA_BACKEND_BASE_URL", "http://localhost:8000")

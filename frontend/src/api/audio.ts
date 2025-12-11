@@ -94,145 +94,78 @@ export interface TrackInfo {
 export interface SeparationResponse {
   code: number;
   message: string;
-  data: {
-    tracks: TrackInfo[];
+  taskId?: number; // 任务ID
+  data?: {
+    tracks?: TrackInfo[]; // 兼容旧格式（如果有）
   };
 }
 
-// 分离选项
-export interface SeparationOptions {
-  model?: string;
-  outputFormat?: 'wav' | 'mp3';
+// 分离请求参数
+export interface SeparationRequest {
+  mediaId: number;
 }
 
 /**
- * 上传并执行人声分离
+ * 执行人声分离
+ * @param mediaId 音频文件的媒体ID
+ * @returns 返回 taskId
  */
-export const uploadAndSeparateVocal = async (
-  file: File,
-  options?: SeparationOptions
-): Promise<SeparationResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  if (options?.model) {
-    formData.append('model', options.model);
-  }
-  if (options?.outputFormat) {
-    formData.append('outputFormat', options.outputFormat.toUpperCase());
-  }
+export const separateVocal = async (mediaId: number): Promise<SeparationResponse> => {
+  const requestBody: SeparationRequest = {
+    mediaId,
+  };
 
-  try {
-    const response = await api.post<SeparationResponse>('/api/ai/audio/vocal', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    // 如果后端未接入，返回模拟数据
-    console.warn('API 调用失败，使用模拟数据:', error);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          code: 0,
-          message: 'success',
-          data: {
-            tracks: [
-              { name: 'Vocal', url: '', description: '人声' },
-              { name: 'Instrumental', url: '', description: '伴奏' },
-            ],
-          },
-        });
-      }, 1500);
-    });
-  }
+  const response = await api.post<SeparationResponse>('/api/audio/separation/vocal', requestBody);
+  return response.data;
 };
 
 /**
- * 上传并执行 4 轨分离
+ * 执行 4 轨分离
+ * @param mediaId 音频文件的媒体ID
+ * @returns 返回 taskId
  */
-export const uploadAndSeparateDemucs4 = async (
-  file: File,
-  options?: SeparationOptions
-): Promise<SeparationResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  if (options?.outputFormat) {
-    formData.append('outputFormat', options.outputFormat.toUpperCase());
-  }
+export const separateDemucs4 = async (mediaId: number): Promise<SeparationResponse> => {
+  const requestBody: SeparationRequest = {
+    mediaId,
+  };
 
-  try {
-    const response = await api.post<SeparationResponse>('/api/ai/audio/demucs4', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    // 如果后端未接入，返回模拟数据
-    console.warn('API 调用失败，使用模拟数据:', error);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          code: 0,
-          message: 'success',
-          data: {
-            tracks: [
-              { name: 'Vocal', url: '', description: '人声' },
-              { name: 'Drums', url: '', description: '鼓' },
-              { name: 'Bass', url: '', description: '贝斯' },
-              { name: 'Other', url: '', description: '其他' },
-            ],
-          },
-        });
-      }, 1500);
-    });
-  }
+  const response = await api.post<SeparationResponse>('/api/audio/separation/stem4', requestBody);
+  return response.data;
 };
 
 /**
- * 上传并执行 6 轨分离
+ * 执行 6 轨分离
+ * @param mediaId 音频文件的媒体ID
+ * @returns 返回 taskId
  */
-export const uploadAndSeparateDemucs6 = async (
-  file: File,
-  options?: SeparationOptions
-): Promise<SeparationResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  if (options?.outputFormat) {
-    formData.append('outputFormat', options.outputFormat.toUpperCase());
-  }
+export const separateDemucs6 = async (mediaId: number): Promise<SeparationResponse> => {
+  const requestBody: SeparationRequest = {
+    mediaId,
+  };
 
-  try {
-    const response = await api.post<SeparationResponse>('/api/ai/audio/demucs6', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    // 如果后端未接入，返回模拟数据
-    console.warn('API 调用失败，使用模拟数据:', error);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          code: 0,
-          message: 'success',
-          data: {
-            tracks: [
-              { name: 'Vocal', url: '', description: '人声' },
-              { name: 'Drums', url: '', description: '鼓' },
-              { name: 'Bass', url: '', description: '贝斯' },
-              { name: 'Other', url: '', description: '其他' },
-              { name: 'Piano', url: '', description: '钢琴' },
-              { name: 'Guitar', url: '', description: '吉他' },
-            ],
-          },
-        });
-      }, 1500);
-    });
-  }
+  const response = await api.post<SeparationResponse>('/api/audio/separation/stem6', requestBody);
+  return response.data;
+};
+
+// 任务状态响应（对应后端 TaskStatusResponse）
+export interface TaskStatusResponse {
+  code?: number;
+  message?: string;
+  taskId: number;
+  status: 'PENDING' | 'PROCESSING' | 'SUCCESS' | 'FAILED';
+  progress: number; // 0-100
+  vocalUrl?: string; // 人声分离时的人声 URL
+  instUrl?: string; // 人声分离时的伴奏 URL
+  trackUrls?: string[]; // 多轨分离时的各轨 URL 列表
+  errorMsg?: string; // 错误信息
+}
+
+/**
+ * 查询任务状态
+ * @param taskId 任务ID
+ * @returns 任务状态信息
+ */
+export const getTaskStatus = async (taskId: number): Promise<TaskStatusResponse> => {
+  const response = await api.get<TaskStatusResponse>(`/api/audio/task/${taskId}`);
+  return response.data;
 };

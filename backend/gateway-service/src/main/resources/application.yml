@@ -69,7 +69,28 @@ spring:
           filters:
             - StripPrefix=1
         
-        # AI Service Client 路由
+        # AI Service Client 路由 - 音频分离接口
+        - id: ai-service-client-separation
+          uri: lb://ai-service-client
+          predicates:
+            - Path=/api/audio/separation/**
+          filters:
+            - StripPrefix=1
+        # AI Service Client 路由 - 任务查询接口
+        - id: ai-service-client-task
+          uri: lb://ai-service-client
+          predicates:
+            - Path=/api/audio/task/**
+          filters:
+            - StripPrefix=1
+        # AI Service Client 路由 - 内部进度更新接口（供 Python 调用）
+        - id: ai-service-client-internal
+          uri: lb://ai-service-client
+          predicates:
+            - Path=/internal/audio/**
+          filters:
+            - StripPrefix=1
+        # AI Service Client 路由 - 其他 AI 接口（回调等）
         - id: ai-service-client
           uri: lb://ai-service-client
           predicates:
