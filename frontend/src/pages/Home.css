@@ -5,10 +5,10 @@
   grid-template-columns: 280px 1fr !important;
 }
 
-/* 首页布局：中间主内容 + 右侧单列 Sidebar */
+/* 首页布局：单列内容 */
 .home-page {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr;
   gap: var(--spacing-lg);
   width: 100%;
   height: 100%;

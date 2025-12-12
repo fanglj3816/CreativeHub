@@ -1,0 +1,204 @@
+@import '../../styles/theme.css';
+
+.feed-composer {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
+
+.composer-top {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.composer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1e3a8a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.composer-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.composer-input {
+  position: relative;
+}
+
+.composer-input-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+  font-size: 20px;
+}
+
+.composer-input-icon:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.composer-boost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: rgba(147, 51, 234, 0.2);
+  color: #a855f7;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+
+.composer-boost-btn:hover {
+  background: rgba(147, 51, 234, 0.3);
+  color: #c084fc;
+}
+
+/* TextArea 外层容器 */
+.composer-input :global(.ant-input-textarea) {
+  background: var(--bg-card) !important;
+  border: none !important;
+}
+
+/* 直接针对 textarea 元素 - 使用更具体的选择器 */
+.composer-input :global(.ant-input-textarea textarea),
+.composer-input :global(textarea.ant-input) {
+  background: var(--bg-card) !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
+  padding: 0 48px 0 14px !important;
+  min-height: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  font-size: 16px !important;
+  resize: none !important;
+}
+
+/* TextArea placeholder 样式 */
+.composer-input :global(.ant-input-textarea textarea::placeholder),
+.composer-input :global(textarea.ant-input::placeholder) {
+  font-size: 16px !important;
+  color: var(--text-secondary) !important;
+  line-height: 40px !important;
+}
+
+/* TextArea focus 状态 */
+.composer-input :global(.ant-input-textarea textarea:focus),
+.composer-input :global(textarea.ant-input:focus) {
+  border: none !important;
+  box-shadow: none !important;
+  background: var(--bg-card) !important;
+  outline: none !important;
+}
+
+/* 普通 input 样式（备用） */
+.composer-input :global(.ant-input) {
+  background: var(--bg-card) !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
+  padding: 0 48px 0 14px !important;
+  min-height: 40px !important;
+  line-height: 40px !important;
+  font-size: 16px !important;
+}
+
+.composer-input :global(.ant-input::placeholder) {
+  font-size: 16px !important;
+  color: var(--text-secondary) !important;
+  line-height: 40px !important;
+}
+
+.composer-input :global(.ant-input:focus) {
+  border: none !important;
+  box-shadow: none !important;
+  background: var(--bg-card) !important;
+}
+
+.composer-input :global(.ant-input-textarea-show-count) {
+  color: var(--text-tertiary);
+}
+
+.composer-actions {
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.composer-tools {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.composer-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.composer-tool-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+  background: rgba(0, 212, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.12);
+}
+
+.composer-submit {
+  min-width: 120px;
+  height: 40px;
+}
+
+@media (max-width: 768px) {
+  .composer-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .composer-submit {
+    width: 100%;
+  }
+}
+

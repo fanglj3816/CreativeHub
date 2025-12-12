@@ -1,36 +1,168 @@
-import { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Input, Spin, App } from 'antd';
+import { SearchOutlined, ThunderboltOutlined, CustomerServiceOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
-import HeroSection from '../components/home/HeroSection';
-import HotWorksSection from '../components/home/HotWorksSection';
-import DynamicFeed from '../components/home/DynamicFeed';
-import RightSidebar from '../components/home/RightSidebar';
-import './Home.css';
+import FeedSidebar, { type FeedFilter } from '../components/feed/FeedSidebar';
+import FeedComposer from '../components/feed/FeedComposer';
+import FeedTrendingSection, { type TrendingItem } from '../components/feed/FeedTrendingSection';
+import FeedRightSidebar from '../components/feed/FeedRightSidebar';
+import FeedCard from '../components/FeedCard';
+import { getFeed, searchPosts, type PostDTO } from '../api/post';
+import { formatPostForFeedCard } from '../utils/postMapper';
+import './HomeFeed.css';
 
-const Home = () => {
+const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const { message } = App.useApp();
+  const [posts, setPosts] = useState<PostDTO[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState<FeedFilter>('TRENDING');
+  const [searchKeyword, setSearchKeyword] = useState('');
+
   useEffect(() => {
-    // 给 MainLayout 添加首页专用类名
-    const mainLayout = document.querySelector('.main-layout');
-    if (mainLayout) {
-      mainLayout.classList.add('home-layout');
-    }
-
-    // 清理函数：移除类名（如果离开首页）
-    return () => {
-      if (mainLayout) {
-        mainLayout.classList.remove('home-layout');
-      }
-    };
+    loadFeed();
   }, []);
 
+  const loadFeed = async () => {
+    try {
+      setLoading(true);
+      const response = await getFeed(1, 10);
+      if (response.code === 0 && response.data) {
+        setPosts(response.data.items || []);
+      } else {
+        message.warning(response.message || '加载动态失败');
+      }
+    } catch (error) {
+      console.error('加载 Feed 失败:', error);
+      message.error('加载动态失败，请稍后重试');
+      setPosts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (value: string) => {
+    setSearchKeyword(value);
+    if (!value.trim()) {
+      loadFeed();
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await searchPosts(value.trim());
+      if (response.code === 0 && response.data) {
+        setPosts(response.data.items || []);
+      } else {
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error('搜索失败:', error);
+      message.error('搜索失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredPosts = useMemo(() => {
+    if (filter === 'TRENDING' || filter === 'FOLLOWING' || filter === 'COMMUNITY') {
+      // TODO: 后端支持后替换为真实过滤逻辑
+      return posts;
+    }
+    return posts.filter((post) => {
+      const mediaType = post.mediaList?.[0]?.fileType?.toUpperCase();
+      if (!mediaType) return false;
+      if (filter === 'MUSIC') return mediaType === 'AUDIO';
+      if (filter === 'VIDEO') return mediaType === 'VIDEO';
+      if (filter === 'PHOTO') return mediaType === 'IMAGE';
+      return true;
+    });
+  }, [filter, posts]);
+
+  const trendingItems: TrendingItem[] = useMemo(() => {
+    const withCover = posts
+      .filter((p) => p.mediaList && p.mediaList.length > 0 && p.mediaList[0].url)
+      .slice(0, 6)
+      .map((p) => ({
+        id: p.id,
+        title: p.content?.slice(0, 80) || '热门作品',
+        coverUrl: p.mediaList?.[0]?.url || '',
+        tag: p.mediaList?.[0]?.fileType || undefined,
+        onClick: () => navigate(`/post/${p.id}`),
+      }));
+    return withCover;
+  }, [navigate, posts]);
+
   return (
-    <MainLayout hideRightPanel={true}>
-      <div className="home-page">
-        <div className="home-main-content">
-          <HeroSection />
-          <HotWorksSection />
-          <DynamicFeed />
+    <MainLayout 
+      className="feed-main-layout"
+      hideRightPanel 
+      hideLeftPanel
+    >
+      <div className="feed-page">
+        <div className="feed-toolbar-wrapper">
+          <div className="feed-toolbar">
+            <div className="feed-logo">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              <span className="logo-text">CreativeHub</span>
+            </div>
+            <div className="feed-toolbar-right">
+              <div className="feed-top-actions">
+                <button className="top-action-btn" onClick={() => setFilter('TRENDING')}>
+                  <ThunderboltOutlined /> <span>Feed</span>
+                </button>
+                <button className="top-action-btn" onClick={() => setFilter('MUSIC')}>
+                  <CustomerServiceOutlined /> <span>Services</span>
+                </button>
+                <button className="top-action-btn" onClick={() => setFilter('VIDEO')}>
+                  <VideoCameraOutlined /> <span>Library</span>
+                </button>
+              </div>
+              <Input
+                style={{ maxWidth: 480 }}
+                placeholder="搜索作品、用户…"
+                prefix={<SearchOutlined />}
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
+              />
+            </div>
+          </div>
         </div>
-        <RightSidebar />
+
+        <div className="feed-shell">
+          <div className="feed-grid">
+            <div className="feed-left">
+              <FeedSidebar activeFilter={filter} onChange={setFilter} />
+            </div>
+            <div className="feed-main">
+              <FeedComposer onPostSuccess={loadFeed} onGoCreatePost={() => navigate('/create-post')} />
+
+              <FeedTrendingSection items={trendingItems} loading={loading} />
+
+              <div className="feed-list">
+                {loading && (
+                  <div className="feed-loading">
+                    <Spin size="large" />
+                  </div>
+                )}
+
+                {!loading &&
+                  filteredPosts.map((post) => {
+                    const feedCardData = formatPostForFeedCard(post);
+                    return <FeedCard key={post.id} {...feedCardData} />;
+                  })}
+              </div>
+            </div>
+
+            <div className="feed-right">
+              <FeedRightSidebar />
+            </div>
+          </div>
+        </div>
       </div>
     </MainLayout>
   );

@@ -1,0 +1,243 @@
+@import '../styles/theme.css';
+
+.feed-page {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg-primary);
+
+}
+  
+
+.feed-shell {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0 0 var(--spacing-lg);
+    padding-top: calc(80px + 5px); /* 为固定导航栏留出空间，最小间距 */
+    box-sizing: border-box;
+  }
+  
+
+.feed-grid {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 640px) 320px;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 100%;
+  align-items: flex-start;
+  margin-top: 0; /* 保证 grid 不往下挪 */
+  justify-content: center; /* 确保内容居中 */
+}
+  
+.feed-left {
+  position: sticky;
+  top: calc(80px + 5px); /* toolbar 高度 + padding-top，滚动时固定在此位置 */
+  align-self: flex-start;
+  height: fit-content;
+}
+
+.feed-right {
+  position: sticky;
+  top: calc(80px + 5px); /* toolbar 高度 + padding-top，滚动时固定在此位置 */
+  align-self: flex-start;
+  height: fit-content;
+}
+
+.feed-left,
+.feed-main,
+.feed-right {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.feed-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* 清理中间列子元素的顶部外边距，避免第一个块被往下推 */
+.feed-main > * {
+  margin-top: 0 !important;
+}
+
+.feed-toolbar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100vw;
+  background: var(--bg-card);
+  margin: 0;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feed-toolbar {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--spacing-xl);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--spacing-sm) calc((100vw - 1360px) / 2);
+}
+
+.feed-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.feed-logo svg {
+  color: var(--text-accent);
+  width: 32px;
+  height: 32px;
+}
+
+.feed-logo .logo-text {
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.feed-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.feed-top-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.top-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.top-action-btn:hover {
+  border-color: var(--border-color-hover);
+  color: var(--text-primary);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.feed-toolbar :global(.ant-input-affix-wrapper) {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.feed-toolbar :global(.ant-input) {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.feed-toolbar :global(.ant-input-affix-wrapper-focused) {
+  border-color: var(--border-color-hover) !important;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.feed-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+}
+
+@media (max-width: 1280px) {
+  .feed-grid {
+    grid-template-columns: 240px minmax(0, 3fr) minmax(0, 1.8fr);
+    gap: var(--spacing-md);
+    margin-top: 0; /* 确保响应式下也不往下挪 */
+  }
+}
+
+@media (max-width: 1024px) {
+  .feed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feed-left {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .feed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feed-shell {
+    padding: 0 0 var(--spacing-lg);
+    padding-top: calc(80px + 5px);
+  }
+}
+
+@media (max-width: 768px) {
+  .feed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feed-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--spacing-sm) var(--spacing-md); /* 小屏幕使用固定 padding */
+  }
+}
+
+/* 确保在小屏幕上 toolbar padding 不会为负 */
+@media (max-width: 1400px) {
+  .feed-toolbar {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+}
+
+/* 让 Feed 页的 MainLayout 只保留一列内容区域，去掉右侧 300px 空白列 */
+.main-layout.feed-main-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* 单列，占满可用宽度 */
+}
+
+/* 确保 main-content 在单列布局下撑满宽度 */
+.main-layout.feed-main-layout .main-content {
+  width: 100%;
+  padding: 0; /* 移除 padding，让 feed-page 自己控制间距 */
+  overflow: visible; /* 允许固定定位的元素超出 */
+}
+

@@ -1,11 +1,12 @@
 @import '../styles/theme.css';
 
 .feed-card {
+  width: 100%;
+  box-sizing: border-box;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
   transition: all var(--transition-base);
   backdrop-filter: blur(10px);
 }

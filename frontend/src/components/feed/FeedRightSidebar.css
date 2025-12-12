@@ -1,0 +1,145 @@
+@import '../../styles/theme.css';
+
+.feed-right {
+  position: sticky;
+  top: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.right-card {
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.right-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.right-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.right-subtitle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.right-refresh {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.right-refresh:hover {
+  border-color: var(--border-color-hover);
+  color: var(--text-primary);
+}
+
+.right-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.right-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.right-item:hover {
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.right-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.right-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.right-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.right-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.right-followers {
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.right-action {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-weight: 600;
+}
+
+.right-action:hover {
+  border-color: var(--text-accent);
+  color: var(--text-accent);
+}
+
+.right-footer {
+  margin-top: var(--spacing-sm);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .feed-right {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .feed-right {
+    display: none;
+  }
+}
+
