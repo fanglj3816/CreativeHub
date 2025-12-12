@@ -65,7 +65,9 @@ const FeedTrendingSection: React.FC<FeedTrendingSectionProps> = ({ items, loadin
           ))}
 
         {!loading &&
-          items.map((item) => (
+          items.map((item) => {
+            const isAudio = item.tag?.toUpperCase() === 'AUDIO';
+            return (
             <div
               className="trending-card"
               key={item.id}
@@ -77,14 +79,19 @@ const FeedTrendingSection: React.FC<FeedTrendingSectionProps> = ({ items, loadin
               }}
             >
               <div className="trending-cover">
-                <img src={item.coverUrl} alt={item.title} loading="lazy" />
+                {isAudio ? (
+                  <div className="trending-waveform" aria-label="audio waveform placeholder" />
+                ) : (
+                  <img src={item.coverUrl} alt={item.title} loading="lazy" />
+                )}
                 {item.tag && <span className="trending-tag">{item.tag}</span>}
               </div>
               <div className="trending-info">
                 <div className="trending-item-title">{item.title}</div>
               </div>
             </div>
-          ))}
+          );
+          })}
 
         {!loading && items.length === 0 && (
           <div className="trending-empty">暂无可展示的热门作品</div>
