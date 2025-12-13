@@ -26,7 +26,7 @@ const VocalSeparation: React.FC = () => {
   const [taskStatus, setTaskStatus] = useState<TaskStatus | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<VocalResult | null>(null);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // 清理轮询
   useEffect(() => {
@@ -115,7 +115,7 @@ const VocalSeparation: React.FC = () => {
     try {
       const response = await getTaskDetail(id);
       if (response.code === 0 && response.data) {
-        const status = response.data.data;
+        const status = response.data;
         setTaskStatus(status);
 
         // 如果任务完成或失败，停止轮询

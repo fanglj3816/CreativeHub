@@ -37,7 +37,6 @@ const AudioSeparationPage: React.FC = () => {
   const [tracks, setTracks] = useState<TrackInfo[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [taskId, setTaskId] = useState<number | null>(null); // 任务ID
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isSubmittingRef = useRef<boolean>(false); // 防止重复提交
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -274,7 +273,6 @@ const AudioSeparationPage: React.FC = () => {
     setLoading(true);
     setProgress(0);
     setTracks([]);
-    setTaskId(null);
     // 清除之前的轮询
     stopPolling();
 
@@ -292,8 +290,6 @@ const AudioSeparationPage: React.FC = () => {
       }
 
       if (response.code === 0 && response.taskId) {
-        // 保存 taskId，后续用于轮询
-        setTaskId(response.taskId);
         message.success('任务已创建，正在处理中...');
         // 开始轮询任务状态
         startPolling(response.taskId);
@@ -310,32 +306,6 @@ const AudioSeparationPage: React.FC = () => {
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
       }
-    }
-  };
-
-  // 获取模拟轨道数据
-  const getMockTracks = (currentMode: string): TrackInfo[] => {
-    if (currentMode === 'vocal') {
-      return [
-        { name: 'Vocal', url: '', description: '人声' },
-        { name: 'Instrumental', url: '', description: '伴奏' },
-      ];
-    } else if (currentMode === 'demucs4') {
-      return [
-        { name: 'Vocal', url: '', description: '人声' },
-        { name: 'Drums', url: '', description: '鼓' },
-        { name: 'Bass', url: '', description: '贝斯' },
-        { name: 'Other', url: '', description: '其他' },
-      ];
-    } else {
-      return [
-        { name: 'Vocal', url: '', description: '人声' },
-        { name: 'Drums', url: '', description: '鼓' },
-        { name: 'Bass', url: '', description: '贝斯' },
-        { name: 'Other', url: '', description: '其他' },
-        { name: 'Piano', url: '', description: '钢琴' },
-        { name: 'Guitar', url: '', description: '吉他' },
-      ];
     }
   };
 

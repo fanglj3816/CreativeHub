@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, Spin, App } from 'antd';
-import { SearchOutlined, ThunderboltOutlined, CustomerServiceOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { Input, Spin, App, Badge } from 'antd';
+import {
+  SearchOutlined,
+  ThunderboltOutlined,
+  CustomerServiceOutlined,
+  VideoCameraOutlined,
+  BellOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
 import FeedSidebar, { type FeedFilter } from '../components/feed/FeedSidebar';
 import FeedComposer from '../components/feed/FeedComposer';
@@ -111,17 +118,27 @@ const Home: React.FC = () => {
             </div>
             <div className="feed-toolbar-right">
               <div className="feed-top-actions">
-                <button className="top-action-btn" onClick={() => setFilter('TRENDING')}>
+                <button
+                  className={`top-action-btn ${filter === 'TRENDING' ? 'active' : ''}`}
+                  onClick={() => setFilter('TRENDING')}
+                >
                   <ThunderboltOutlined /> <span>Feed</span>
                 </button>
-                <button className="top-action-btn" onClick={() => setFilter('MUSIC')}>
+                <button
+                  className={`top-action-btn ${filter === 'MUSIC' ? 'active' : ''}`}
+                  onClick={() => setFilter('MUSIC')}
+                >
                   <CustomerServiceOutlined /> <span>Services</span>
                 </button>
-                <button className="top-action-btn" onClick={() => setFilter('VIDEO')}>
+                <button
+                  className={`top-action-btn ${filter === 'VIDEO' ? 'active' : ''}`}
+                  onClick={() => setFilter('VIDEO')}
+                >
                   <VideoCameraOutlined /> <span>Library</span>
                 </button>
               </div>
               <Input
+                className="feed-search"
                 style={{ maxWidth: 480 }}
                 placeholder="搜索作品、用户…"
                 prefix={<SearchOutlined />}
@@ -129,6 +146,37 @@ const Home: React.FC = () => {
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
               />
+
+              <div className="feed-toolbar-actions" aria-label="toolbar actions">
+                <button className="toolbar-icon-btn" type="button" aria-label="通知">
+                  <Badge count={11} size="small" offset={[-2, 2]}>
+                    <BellOutlined />
+                  </Badge>
+                </button>
+
+                <button
+                  className="toolbar-pill-btn"
+                  type="button"
+                  onClick={() => navigate('/ai-tools')}
+                  aria-label="Get"
+                >
+                  Get
+                </button>
+
+                <button className="toolbar-avatar-btn" type="button" aria-label="个人中心">
+                  <span className="toolbar-avatar">FF</span>
+                </button>
+
+                <button
+                  className="toolbar-primary-btn"
+                  type="button"
+                  onClick={() => navigate('/create-post')}
+                  aria-label="发布作品"
+                >
+                  <PlusOutlined />
+                  <span>Create</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

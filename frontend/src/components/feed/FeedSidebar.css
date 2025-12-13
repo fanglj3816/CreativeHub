@@ -1,14 +1,19 @@
 @import '../../styles/theme.css';
 
 .feed-sidebar {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-md) var(--spacing-lg);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px);
+  /* 目标站风格：左侧栏不做“外框卡片”，让按钮自己承担层级 */
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
   position: sticky;
   top: 16px;
+  /* 不铺满左侧栏列宽，让整体更紧凑 */
+  width: 232px;
+  max-width: 232px;
+  margin-right: auto;
 }
 
 .feed-sidebar-header {
@@ -23,18 +28,19 @@
 .feed-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px; /* 更紧凑 */
 }
 
 .feed-sidebar-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: 12px 16px;
-  border-radius: var(--radius-lg);
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.02);
+  gap: 10px;
+  padding: 10px 12px;
+  min-height: 52px; /* 更紧凑 */
+  border-radius: 10px; /* 更“方”一点 */
+  border: none;
+  background: transparent; /* 默认无底色 */
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-base);
@@ -45,29 +51,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  background: rgba(0, 212, 255, 0.08);
-  color: var(--text-accent);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px; /* 图标块更“方”一点 */
+  background: rgba(255, 255, 255, 0.06); /* 图标块可常驻，按钮本身不铺底色 */
+  color: var(--text-secondary);
 }
 
 .feed-sidebar-item:hover {
-  border-color: var(--border-color-hover);
-  background: rgba(0, 212, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
-  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.08);
 }
 
 .feed-sidebar-item.active {
-  border-color: var(--text-accent);
-  background: rgba(0, 212, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07); /* 更接近目标站：浅底色，不要太“霓虹” */
   color: var(--text-primary);
 }
 
+.feed-sidebar-item.active .item-icon {
+  background: rgba(0, 212, 255, 0.14); /* 只在图标块强调主色 */
+  color: var(--text-accent);
+}
+
 .feed-sidebar-item .item-label {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {

@@ -73,7 +73,7 @@
   background: var(--bg-card);
   margin: 0;
   box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
 
 .feed-toolbar {
@@ -118,7 +118,7 @@
 .feed-toolbar-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-md);
   flex: 1;
   justify-content: flex-start;
 }
@@ -133,36 +133,146 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.02);
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-base);
 }
 
 .top-action-btn:hover {
-  border-color: var(--border-color-hover);
   color: var(--text-primary);
-  background: rgba(0, 212, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.feed-toolbar :global(.ant-input-affix-wrapper) {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.03);
+.top-action-btn.active {
   color: var(--text-primary);
+  background: rgba(0, 212, 255, 0.14);
 }
 
-.feed-toolbar :global(.ant-input) {
+.feed-toolbar .ant-input-affix-wrapper.feed-search,
+.feed-toolbar .feed-search.ant-input-affix-wrapper {
+  border-radius: 14px;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  height: 38px;
+}
+
+.feed-toolbar .ant-input-affix-wrapper.feed-search:hover,
+.feed-toolbar .feed-search.ant-input-affix-wrapper:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.feed-toolbar .ant-input-affix-wrapper.feed-search .ant-input,
+.feed-toolbar .feed-search.ant-input-affix-wrapper .ant-input {
   background: transparent !important;
   color: var(--text-primary) !important;
 }
 
-.feed-toolbar :global(.ant-input-affix-wrapper-focused) {
-  border-color: var(--border-color-hover) !important;
-  box-shadow: 0 0 10px var(--glow-color);
+.feed-toolbar .ant-input-affix-wrapper-focused.feed-search,
+.feed-toolbar .feed-search.ant-input-affix-wrapper-focused {
+  border: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.feed-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.toolbar-icon-btn {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toolbar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+}
+
+.toolbar-icon-btn .ant-badge {
+  display: inline-flex;
+}
+
+.toolbar-icon-btn .ant-badge-count {
+  box-shadow: none;
+}
+
+.toolbar-pill-btn {
+  height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.toolbar-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.toolbar-avatar-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.toolbar-avatar-btn:hover {
+  background: rgba(0, 212, 255, 0.16);
+}
+
+.toolbar-avatar {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+.toolbar-primary-btn {
+  height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.16);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  font-weight: 600;
+}
+
+.toolbar-primary-btn:hover {
+  background: rgba(0, 212, 255, 0.22);
 }
 
 .feed-list {
