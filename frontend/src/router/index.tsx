@@ -26,9 +26,21 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
+    element: <Navigate to="/feed" replace />,
+  },
+  {
+    path: '/feed',
     element: (
       <ProtectedRoute>
         <Home />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/service',
+    element: (
+      <ProtectedRoute>
+        <AudioSeparationPage />
       </ProtectedRoute>
     ),
   },
@@ -58,11 +70,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/audio/tools/separation',
-    element: (
-      <ProtectedRoute>
-        <AudioSeparationPage />
-      </ProtectedRoute>
-    ),
+    element: <Navigate to="/service" replace />,
   },
   {
     path: '/audio/tools/vocal-separation',

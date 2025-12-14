@@ -1,6 +1,5 @@
 import React from 'react';
 import QuickActionCard from './QuickActionCard';
-import CreatorCard from './CreatorCard';
 import './RightPanel.css';
 
 const RightPanel: React.FC = () => {
@@ -53,30 +52,6 @@ const RightPanel: React.FC = () => {
     },
   ];
 
-  const creators = [
-    {
-      id: 1,
-      name: '音乐人小A',
-      avatar: '🎵',
-      followers: '12.5k',
-      isFollowing: false,
-    },
-    {
-      id: 2,
-      name: '摄影师B',
-      avatar: '📷',
-      followers: '8.3k',
-      isFollowing: true,
-    },
-    {
-      id: 3,
-      name: '创意设计师C',
-      avatar: '✨',
-      followers: '15.2k',
-      isFollowing: false,
-    },
-  ];
-
   const inspirations = [
     {
       id: 1,
@@ -105,15 +80,6 @@ const RightPanel: React.FC = () => {
         <div className="quick-actions">
           {quickActions.map((action) => (
             <QuickActionCard key={action.id} {...action} />
-          ))}
-        </div>
-      </div>
-
-      <div className="panel-section">
-        <h3 className="section-title">热门创作者</h3>
-        <div className="creators-list">
-          {creators.map((creator) => (
-            <CreatorCard key={creator.id} {...creator} />
           ))}
         </div>
       </div>

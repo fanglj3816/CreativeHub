@@ -1,7 +1,7 @@
 @import '../../styles/theme.css';
 
 .feed-sidebar {
-  /* 目标站风格：左侧栏不做“外框卡片”，让按钮自己承担层级 */
+  /* 左侧栏：更简洁（类似目标站） */
   background: transparent;
   border-radius: 0;
   padding: 0;
@@ -10,7 +10,7 @@
   backdrop-filter: none;
   position: sticky;
   top: 16px;
-  /* 不铺满左侧栏列宽，让整体更紧凑 */
+  /* 与 Feed 三列布局左列一致 */
   width: 232px;
   max-width: 232px;
   margin-right: auto;
@@ -28,19 +28,19 @@
 .feed-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* 更紧凑 */
+  gap: 12px; /* 更接近目标站的紧凑间距 */
 }
 
 .feed-sidebar-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   padding: 10px 12px;
-  min-height: 52px; /* 更紧凑 */
-  border-radius: 10px; /* 更“方”一点 */
-  border: none;
-  background: transparent; /* 默认无底色 */
+  min-height: 60px; /* 比之前更小 */
+  border-radius: 12px; /* 更方正一点 */
+  background: transparent; /* 默认无背景 */
+  border: none; /* 默认无边框 */
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-base);
@@ -51,11 +51,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px; /* 图标块更“方”一点 */
-  background: rgba(255, 255, 255, 0.06); /* 图标块可常驻，按钮本身不铺底色 */
+  width: 44px;
+  height: 44px;
+  border-radius: 10px; /* 图标边角更方 */
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.feed-sidebar-item .item-icon :is(svg, span) {
+  font-size: 22px;
 }
 
 .feed-sidebar-item:hover {
@@ -64,18 +70,20 @@
 }
 
 .feed-sidebar-item.active {
-  background: rgba(255, 255, 255, 0.07); /* 更接近目标站：浅底色，不要太“霓虹” */
+  background: rgba(255, 255, 255, 0.07);
   color: var(--text-primary);
 }
 
 .feed-sidebar-item.active .item-icon {
-  background: rgba(0, 212, 255, 0.14); /* 只在图标块强调主色 */
+  background: rgba(0, 212, 255, 0.14);
   color: var(--text-accent);
+  border-color: rgba(0, 212, 255, 0.22);
 }
 
 .feed-sidebar-item .item-label {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 @media (max-width: 1024px) {

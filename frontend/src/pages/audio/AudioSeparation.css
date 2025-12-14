@@ -1,13 +1,257 @@
 @import '../../styles/theme.css';
 
-.audio-separation-page {
-  max-width: 1000px;
+/* /service 页面：隐藏 MainLayout 默认左右栏，使用页面内部三列布局 */
+.main-layout.service-main-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.main-layout.service-main-layout .main-content {
+  width: 100%;
+  padding: 0;
+  overflow: visible;
+}
+
+.service-page {
+  padding-top: calc(80px + var(--spacing-lg));
+  padding-bottom: var(--spacing-xl);
+}
+
+/* 关键布局：左(工具导航)/中(步骤)/右(推荐&帮助&最近处理) */
+.service-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(720px, 1fr) 340px;
+  gap: var(--spacing-lg);
+  max-width: 1320px;
   margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  align-items: start;
+}
+
+.service-left,
+.service-right {
+  position: sticky;
+  top: 88px; /* 80px 顶栏 + 8px 缓冲 */
+  height: calc(100vh - 96px);
+  overflow: auto;
+}
+
+.service-center {
+  min-width: 0;
+}
+
+.service-header {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.tool-nav-card {
   padding: var(--spacing-lg);
-  min-height: calc(100vh - 120px);
+}
+
+.tool-nav-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.tool-nav-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tool-nav-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.tool-nav-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 10px;
+}
+
+.tool-nav-item {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  border-radius: 12px;
+  padding: 12px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.tool-nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+}
+
+.tool-nav-item.active {
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.tool-nav-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tool-nav-tag,
+.side-tag {
+  margin-left: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+/* 步骤卡片（只展开当前步骤） */
+.step-card {
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  cursor: pointer;
+}
+
+.step-card.is-active {
+  outline: 1px solid rgba(0, 212, 255, 0.25);
+  box-shadow: var(--shadow-md);
+}
+
+.step-card.is-collapsed .step-card__body {
+  display: none;
+}
+
+.step-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.step-card__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.step-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-card__meta {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-card__body {
+  margin-top: var(--spacing-lg);
+}
+
+.step-card__footer {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.step-footer-split {
+  justify-content: space-between;
+}
+
+/* 右侧卡片 */
+.side-card {
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.side-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.side-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-card__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.side-card__item-title {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.side-link {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+}
+
+.side-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.recent-name {
+  color: var(--text-secondary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-tag {
+  margin-left: auto;
 }
 
 /* 头部样式 */
@@ -18,20 +262,6 @@
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--border-color);
-}
-
-.back-btn {
-  color: var(--text-secondary);
-  font-size: 16px;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-base);
-  flex-shrink: 0;
-}
-
-.back-btn:hover {
-  color: var(--text-accent);
-  background: rgba(0, 212, 255, 0.1);
 }
 
 .header-content {
@@ -516,6 +746,17 @@
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
+  .service-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .service-left,
+  .service-right {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
   .mode-buttons {
     grid-template-columns: 1fr;
   }

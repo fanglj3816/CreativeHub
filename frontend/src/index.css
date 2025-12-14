@@ -18,6 +18,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-primary);
   color: var(--text-primary);
+  /* 始终保留滚动条占位，避免页面切换时布局左右抖动 */
+  overflow-y: scroll;
 }
 
 #root {

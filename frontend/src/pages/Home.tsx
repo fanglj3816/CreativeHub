@@ -117,35 +117,42 @@ const Home: React.FC = () => {
               <span className="logo-text">CreativeHub</span>
             </div>
             <div className="feed-toolbar-right">
-              <div className="feed-top-actions">
-                <button
-                  className={`top-action-btn ${filter === 'TRENDING' ? 'active' : ''}`}
-                  onClick={() => setFilter('TRENDING')}
-                >
-                  <ThunderboltOutlined /> <span>Feed</span>
-                </button>
-                <button
-                  className={`top-action-btn ${filter === 'MUSIC' ? 'active' : ''}`}
-                  onClick={() => setFilter('MUSIC')}
-                >
-                  <CustomerServiceOutlined /> <span>Services</span>
-                </button>
-                <button
-                  className={`top-action-btn ${filter === 'VIDEO' ? 'active' : ''}`}
-                  onClick={() => setFilter('VIDEO')}
-                >
-                  <VideoCameraOutlined /> <span>Library</span>
-                </button>
+              <div className="feed-toolbar-center">
+                <div className="feed-top-actions">
+                  <button
+                    className="top-action-btn active"
+                    onClick={() => {
+                      setFilter('TRENDING');
+                      navigate('/feed');
+                    }}
+                  >
+                    <ThunderboltOutlined /> <span>Feed</span>
+                  </button>
+                  <button className="top-action-btn" onClick={() => navigate('/service')}>
+                    <CustomerServiceOutlined /> <span>Services</span>
+                  </button>
+                  <button
+                    className="top-action-btn"
+                    onClick={() => {
+                      setFilter('VIDEO');
+                      // 这里先保持在 Feed 页面，后续如果有独立 Library 页再替换
+                      navigate('/feed');
+                    }}
+                  >
+                    <VideoCameraOutlined /> <span>Library</span>
+                  </button>
+                </div>
+
+                <Input
+                  className="feed-search"
+                  style={{ maxWidth: 480 }}
+                  placeholder="搜索作品、用户…"
+                  prefix={<SearchOutlined />}
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
+                />
               </div>
-              <Input
-                className="feed-search"
-                style={{ maxWidth: 480 }}
-                placeholder="搜索作品、用户…"
-                prefix={<SearchOutlined />}
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
-              />
 
               <div className="feed-toolbar-actions" aria-label="toolbar actions">
                 <button className="toolbar-icon-btn" type="button" aria-label="通知">
@@ -154,12 +161,7 @@ const Home: React.FC = () => {
                   </Badge>
                 </button>
 
-                <button
-                  className="toolbar-pill-btn"
-                  type="button"
-                  onClick={() => navigate('/ai-tools')}
-                  aria-label="Get"
-                >
+                <button className="toolbar-pill-btn" type="button" onClick={() => navigate('/ai-tools')} aria-label="Get">
                   Get
                 </button>
 
@@ -167,12 +169,7 @@ const Home: React.FC = () => {
                   <span className="toolbar-avatar">FF</span>
                 </button>
 
-                <button
-                  className="toolbar-primary-btn"
-                  type="button"
-                  onClick={() => navigate('/create-post')}
-                  aria-label="发布作品"
-                >
+                <button className="toolbar-primary-btn" type="button" onClick={() => navigate('/create-post')} aria-label="发布作品">
                   <PlusOutlined />
                   <span>Create</span>
                 </button>

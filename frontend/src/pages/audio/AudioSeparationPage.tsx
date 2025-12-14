@@ -1,6 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Progress, message, Card, Select, Collapse } from 'antd';
-import { DownloadOutlined, ArrowLeftOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Progress, message, Select, Input, Badge, App, Tag } from 'antd';
+import {
+  DownloadOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  ThunderboltOutlined,
+  CustomerServiceOutlined,
+  VideoCameraOutlined,
+  BellOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../layouts/MainLayout';
 import AudioPlayer from '../../components/AudioPlayer';
@@ -14,9 +23,9 @@ import {
 } from '../../api/audio';
 import { uploadMedia, type MediaDTO } from '../../api/media';
 import './AudioSeparation.css';
+import '../HomeFeed.css';
 
 const { Option } = Select;
-const { Panel } = Collapse;
 
 /**
  * AI 音频分离页面
@@ -27,6 +36,7 @@ const { Panel } = Collapse;
  */
 const AudioSeparationPage: React.FC = () => {
   const navigate = useNavigate();
+  const { message: appMessage } = App.useApp();
   const [file, setFile] = useState<File | null>(null);
   const [mediaDTO, setMediaDTO] = useState<MediaDTO | null>(null);
   const [mode, setMode] = useState<'vocal' | 'demucs4' | 'demucs6'>('vocal');
@@ -37,9 +47,14 @@ const AudioSeparationPage: React.FC = () => {
   const [tracks, setTracks] = useState<TrackInfo[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isSubmittingRef = useRef<boolean>(false); // 防止重复提交
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const step1Ref = useRef<HTMLDivElement>(null);
+  const step2Ref = useRef<HTMLDivElement>(null);
+  const step3Ref = useRef<HTMLDivElement>(null);
 
   // 清理定时器
   useEffect(() => {
@@ -47,6 +62,12 @@ const AudioSeparationPage: React.FC = () => {
       stopPolling();
     };
   }, []);
+
+  useEffect(() => {
+    const ref =
+      step === 1 ? step1Ref : step === 2 ? step2Ref : step3Ref;
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [step]);
 
   // 格式化文件大小
   const formatFileSize = (bytes: number): string => {
@@ -147,7 +168,9 @@ const AudioSeparationPage: React.FC = () => {
     setFile(null);
     setMediaDTO(null);
     setTracks([]);
+    setProgress(0);
     message.info('已清除文件，可以重新上传');
+    setStep(1);
   };
 
   // 停止轮询
@@ -325,241 +348,423 @@ const AudioSeparationPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const hasFile = Boolean(file && mediaDTO?.id);
+
   return (
-    <MainLayout>
-      <div className="audio-separation-page">
-        {/* 头部 */}
-        <div className="audio-separation-header">
-          <Button
-            className="back-btn"
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
-            type="text"
-          >
-            返回
-          </Button>
-          <div className="header-content">
-            <h1 className="page-title">AI 音频分离</h1>
-            <p className="page-subtitle">一键提取人声、伴奏和多轨音频，制作你的专属作品</p>
+    <MainLayout className="service-main-layout" hideLeftPanel hideRightPanel>
+      <div className="feed-toolbar-wrapper tool-toolbar-wrapper">
+        <div className="feed-toolbar">
+          <div className="feed-logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span className="logo-text">CreativeHub</span>
+          </div>
+
+          <div className="feed-toolbar-right">
+            <div className="feed-toolbar-center">
+              <div className="feed-top-actions">
+                <button className="top-action-btn" onClick={() => navigate('/feed')}>
+                  <ThunderboltOutlined /> <span>Feed</span>
+                </button>
+                <button className="top-action-btn active" onClick={() => navigate('/service')}>
+                  <CustomerServiceOutlined /> <span>Services</span>
+                </button>
+                <button className="top-action-btn" onClick={() => navigate('/media')}>
+                  <VideoCameraOutlined /> <span>Library</span>
+                </button>
+              </div>
+
+              <Input
+                className="feed-search"
+                style={{ maxWidth: 480 }}
+                placeholder="搜索作品、用户…"
+                prefix={<SearchOutlined />}
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onPressEnter={() => appMessage.info('搜索功能稍后接入')}
+              />
+            </div>
+
+            <div className="feed-toolbar-actions" aria-label="toolbar actions">
+              <button className="toolbar-icon-btn" type="button" aria-label="通知">
+                <Badge count={11} size="small" offset={[-2, 2]}>
+                  <BellOutlined />
+                </Badge>
+              </button>
+
+              <button className="toolbar-pill-btn" type="button" onClick={() => navigate('/ai-tools')} aria-label="Get">
+                Get
+              </button>
+
+              <button className="toolbar-avatar-btn" type="button" aria-label="个人中心">
+                <span className="toolbar-avatar">FF</span>
+              </button>
+
+              <button className="toolbar-primary-btn" type="button" onClick={() => navigate('/create-post')}>
+                <PlusOutlined />
+                <span>Create</span>
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* 上传区域 */}
-        <Card className="upload-section card-base">
-          {!file ? (
-            <div className="upload-area">
-              <div
-                className={`upload-drag-area ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={handleUploadAreaClick}
-              >
-                <div className="upload-icon-wrapper">
-                  <PlusOutlined className="upload-icon" />
-                </div>
-                <p className="upload-text">拖拽音频文件到此处，或点击选择文件</p>
-                <p className="upload-hint">支持格式：MP3 / WAV / FLAC</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="audio/mpeg,audio/mp3,audio/wav,audio/flac,audio/x-flac,.mp3,.wav,.flac"
-                  style={{ display: 'none' }}
-                  onChange={(e) => {
-                    const selectedFile = e.target.files?.[0];
-                    if (selectedFile && !uploading) {
-                      handleFileUpload(selectedFile);
-                    }
-                  }}
-                />
+      <div className="service-page">
+        <div className="service-layout">
+          <aside className="service-left">
+            <div className="card-base tool-nav-card">
+              <div className="tool-nav-header">
+                <div className="tool-nav-title">AI 工具箱</div>
+                <div className="tool-nav-subtitle">选择你想使用的工具</div>
+              </div>
+              <div className="tool-nav-list">
+                <button className="tool-nav-item active" type="button">
+                  <span className="tool-nav-item-icon">🎛️</span>
+                  <span className="tool-nav-item-text">音频分离</span>
+                </button>
+                <button className="tool-nav-item" type="button" onClick={() => appMessage.info('敬请期待')}>
+                  <span className="tool-nav-item-icon">🎤</span>
+                  <span className="tool-nav-item-text">
+                    AI 翻唱 <Tag className="tool-nav-tag">敬请期待</Tag>
+                  </span>
+                </button>
+                <button className="tool-nav-item" type="button" onClick={() => appMessage.info('规划中')}>
+                  <span className="tool-nav-item-icon">🖼️</span>
+                  <span className="tool-nav-item-text">
+                    封面生成 <Tag className="tool-nav-tag">规划中</Tag>
+                  </span>
+                </button>
+                <button className="tool-nav-item" type="button" onClick={() => appMessage.info('规划中')}>
+                  <span className="tool-nav-item-icon">🎬</span>
+                  <span className="tool-nav-item-text">
+                    图+音乐短视频 <Tag className="tool-nav-tag">规划中</Tag>
+                  </span>
+                </button>
               </div>
             </div>
-          ) : (
-            <div className="uploaded-file-info">
-              <div className="file-info-header">
-                <h3 className="file-info-header-title">音频文件信息</h3>
+
+            <div className="card-base side-card">
+              <div className="side-card__title">最近处理的音频</div>
+              <div className="side-card__list">
+                <div className="recent-item">
+                  <div className="recent-name">{file?.name || 'demo_song.flac'}</div>
+                  <Tag className="recent-tag" color={loading ? 'processing' : tracks.length > 0 ? 'success' : 'default'}>
+                    {loading ? '处理中' : tracks.length > 0 ? '已完成' : '待开始'}
+                  </Tag>
+                </div>
+                <div className="recent-item">
+                  <div className="recent-name">lofi.wav</div>
+                  <Tag className="recent-tag" color="processing">
+                    处理中
+                  </Tag>
+                </div>
+                <div className="recent-item">
+                  <div className="recent-name">vocal_take.mp3</div>
+                  <Tag className="recent-tag" color="success">
+                    已完成
+                  </Tag>
+                </div>
               </div>
-              <div className="file-info-content">
-                <div className="file-info-item">
-                  <span className="file-info-label">文件名：</span>
-                  <span className="file-info-value">{file.name}</span>
+            </div>
+          </aside>
+
+          <main className="service-center">
+            <div className="service-header">
+              <h1 className="page-title">AI 音频分离</h1>
+              <p className="page-subtitle">上传音频 → 选择分离方式 → 设置参数并开始处理</p>
+            </div>
+
+            <div
+              ref={step1Ref}
+              className={`card-base step-card ${step === 1 ? 'is-active' : 'is-collapsed'}`}
+              onClick={() => setStep(1)}
+              role="button"
+              tabIndex={0}
+            >
+              <div className="step-card__header">
+                <div className="step-card__title">
+                  <span className="step-pill">Step 1</span>
+                  <span>上传音频</span>
                 </div>
-                <div className="file-info-item">
-                  <span className="file-info-label">大小：</span>
-                  <span className="file-info-value">{formatFileSize(file.size)}</span>
+                <div className="step-card__meta">{hasFile ? file?.name : '支持 MP3 / WAV / FLAC'}</div>
+              </div>
+              <div className="step-card__body">
+                <div className="upload-section">
+                  {!file ? (
+                    <div className="upload-area">
+                      <div
+                        className={`upload-drag-area ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={handleUploadAreaClick}
+                      >
+                        <div className="upload-icon-wrapper">
+                          <PlusOutlined className="upload-icon" />
+                        </div>
+                        <p className="upload-text">拖拽音频文件到此处，或点击选择文件</p>
+                        <p className="upload-hint">支持格式：MP3 / WAV / FLAC</p>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="audio/mpeg,audio/mp3,audio/wav,audio/flac,audio/x-flac,.mp3,.wav,.flac"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const selectedFile = e.target.files?.[0];
+                            if (selectedFile && !uploading) {
+                              handleFileUpload(selectedFile);
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="uploaded-file-info">
+                      <div className="file-info-header">
+                        <h3 className="file-info-header-title">音频文件信息</h3>
+                      </div>
+                      <div className="file-info-content">
+                        <div className="file-info-item">
+                          <span className="file-info-label">文件名：</span>
+                          <span className="file-info-value">{file.name}</span>
+                        </div>
+                        <div className="file-info-item">
+                          <span className="file-info-label">大小：</span>
+                          <span className="file-info-value">{formatFileSize(file.size)}</span>
+                        </div>
+                        {mediaDTO && (
+                          <div className="file-info-item">
+                            <span className="file-info-label">上传状态：</span>
+                            <span className="file-info-value">
+                              {mediaDTO.status === 0 ? '已完成' : mediaDTO.status === 1 ? '处理中' : '失败'}
+                            </span>
+                          </div>
+                        )}
+                        <div className="file-info-item file-info-actions">
+                          <Button className="delete-btn" icon={<DeleteOutlined />} onClick={handleDeleteFile} type="text" danger>
+                            删除
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {mediaDTO && (
-                  <div className="file-info-item">
-                    <span className="file-info-label">上传状态：</span>
-                    <span className="file-info-value">
-                      {mediaDTO.status === 0 ? '已完成' : mediaDTO.status === 1 ? '处理中' : '失败'}
-                    </span>
-                  </div>
-                )}
-                <div className="file-info-item file-info-actions">
-                  <Button
-                    className="delete-btn"
-                    icon={<DeleteOutlined />}
-                    onClick={handleDeleteFile}
-                    type="text"
-                    danger
-                  >
-                    删除
+
+                <div className="step-card__footer">
+                  <Button type="primary" onClick={() => setStep(2)} disabled={!hasFile}>
+                    下一步
                   </Button>
                 </div>
               </div>
             </div>
-          )}
-        </Card>
 
-        {/* 模式选择区域 */}
-        <Card className="mode-section card-base">
-          <h3 className="section-title">分离方式选择</h3>
-          <div className="mode-buttons">
-            <button
-              className={`mode-btn ${mode === 'vocal' ? 'active' : ''}`}
-              onClick={() => setMode('vocal')}
-              disabled={loading}
+            <div
+              ref={step2Ref}
+              className={`card-base step-card ${step === 2 ? 'is-active' : 'is-collapsed'}`}
+              onClick={() => hasFile && setStep(2)}
+              role="button"
+              tabIndex={0}
             >
-              <span className="mode-icon">🎤</span>
-              <div className="mode-content">
-                <div className="mode-name">人声分离</div>
-                <div className="mode-desc">伴奏 + 人声</div>
-              </div>
-            </button>
-            <button
-              className={`mode-btn ${mode === 'demucs4' ? 'active' : ''}`}
-              onClick={() => setMode('demucs4')}
-              disabled={loading}
-            >
-              <span className="mode-icon">🥁</span>
-              <div className="mode-content">
-                <div className="mode-name">4 轨分离</div>
-                <div className="mode-desc">人声 / 鼓 / 贝斯 / 其他</div>
-              </div>
-            </button>
-            <button
-              className={`mode-btn ${mode === 'demucs6' ? 'active' : ''}`}
-              onClick={() => setMode('demucs6')}
-              disabled={loading}
-            >
-              <span className="mode-icon">🎹</span>
-              <div className="mode-content">
-                <div className="mode-name">6 轨分离</div>
-                <div className="mode-desc">扩展多轨</div>
-              </div>
-            </button>
-          </div>
-        </Card>
-
-        {/* 高级选项 */}
-        <Card className="options-section card-base">
-          <Collapse ghost>
-            <Panel header={<span className="options-header">高级选项（可选）</span>} key="1">
-              <div className="options-content">
-                {mode === 'vocal' && (
-                  <div className="option-item">
-                    <label className="option-label">模型选择</label>
-                    <Select
-                      value={modelName}
-                      onChange={setModelName}
-                      className="option-select"
-                      disabled={loading}
-                    >
-                      <Option value="Roformer (model_bs_roformer_ep_317_sdr_12.9755)">
-                        Roformer (model_bs_roformer_ep_317_sdr_12.9755)
-                      </Option>
-                      <Option value="UVR-MDX">UVR-MDX</Option>
-                      <Option value="UVR-Karaoke">UVR-Karaoke</Option>
-                    </Select>
-                  </div>
-                )}
-                <div className="option-item">
-                  <label className="option-label">输出格式</label>
-                  <Select
-                    value={outputFormat}
-                    onChange={(value) => setOutputFormat(value)}
-                    className="option-select"
-                    disabled={loading}
-                  >
-                    <Option value="wav">WAV</Option>
-                    <Option value="mp3">MP3</Option>
-                  </Select>
+              <div className="step-card__header">
+                <div className="step-card__title">
+                  <span className="step-pill">Step 2</span>
+                  <span>选择分离方式</span>
+                </div>
+                <div className="step-card__meta">
+                  {mode === 'vocal' ? '人声分离' : mode === 'demucs4' ? '4 轨分离' : '6 轨分离'}
                 </div>
               </div>
-            </Panel>
-          </Collapse>
-        </Card>
-
-        {/* 操作按钮和进度 */}
-        <div className="action-section">
-                 <Button
-                   type="primary"
-                   size="large"
-                   onClick={handleStartSeparation}
-                   disabled={!mediaDTO || !mediaDTO.id || loading}
-                   className="start-btn"
-                   loading={loading}
-                 >
-                   {loading ? '处理中...' : '开始分离'}
-                 </Button>
-        </div>
-
-        {loading && (
-          <Card className="progress-section card-base">
-            <div className="progress-content">
-              <div className="progress-header">
-                <h3 className="progress-title">处理进度</h3>
-                <span className="progress-percent">{Math.round(progress)}%</span>
-              </div>
-              <Progress
-                percent={progress}
-                status="active"
-                strokeColor={{
-                  '0%': '#00d4ff',
-                  '100%': '#0099cc',
-                }}
-                className="progress-bar"
-              />
-            </div>
-          </Card>
-        )}
-
-        {/* 分离结果区域 */}
-        {tracks.length > 0 && (
-          <div className="results-section">
-            <h3 className="results-title">分离结果</h3>
-            <div className="results-grid">
-              {tracks.map((track, index) => (
-                <Card key={index} className="result-card card-base">
-                  <div className="result-card-header">
-                    <h4 className="result-card-title">{track.name}</h4>
-                    {track.description && (
-                      <p className="result-card-desc">{track.description}</p>
-                    )}
+              <div className="step-card__body">
+                <div className="mode-section">
+                  <div className="mode-buttons">
+                    <button
+                      className={`mode-btn ${mode === 'vocal' ? 'active' : ''}`}
+                      onClick={() => setMode('vocal')}
+                      disabled={loading}
+                      type="button"
+                    >
+                      <span className="mode-icon">🎤</span>
+                      <div className="mode-content">
+                        <div className="mode-name">人声分离</div>
+                        <div className="mode-desc">伴奏 + 人声</div>
+                      </div>
+                    </button>
+                    <button
+                      className={`mode-btn ${mode === 'demucs4' ? 'active' : ''}`}
+                      onClick={() => setMode('demucs4')}
+                      disabled={loading}
+                      type="button"
+                    >
+                      <span className="mode-icon">🥁</span>
+                      <div className="mode-content">
+                        <div className="mode-name">4 轨分离</div>
+                        <div className="mode-desc">人声 / 鼓 / 贝斯 / 其他</div>
+                      </div>
+                    </button>
+                    <button
+                      className={`mode-btn ${mode === 'demucs6' ? 'active' : ''}`}
+                      onClick={() => setMode('demucs6')}
+                      disabled={loading}
+                      type="button"
+                    >
+                      <span className="mode-icon">🎹</span>
+                      <div className="mode-content">
+                        <div className="mode-name">6 轨分离</div>
+                        <div className="mode-desc">扩展多轨</div>
+                      </div>
+                    </button>
                   </div>
-                  <div className="result-card-content">
-                    {track.url ? (
-                      <AudioPlayer url={track.url} fileName={track.name} />
-                    ) : (
-                      <div className="audio-placeholder">
-                        <p className="placeholder-text">音频文件暂未生成</p>
+                </div>
+
+                <div className="step-card__footer step-footer-split">
+                  <Button onClick={() => setStep(1)}>上一步</Button>
+                  <Button type="primary" onClick={() => setStep(3)} disabled={!hasFile}>
+                    下一步
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              ref={step3Ref}
+              className={`card-base step-card ${step === 3 ? 'is-active' : 'is-collapsed'}`}
+              onClick={() => hasFile && setStep(3)}
+              role="button"
+              tabIndex={0}
+            >
+              <div className="step-card__header">
+                <div className="step-card__title">
+                  <span className="step-pill">Step 3</span>
+                  <span>设置参数并开始</span>
+                </div>
+                <div className="step-card__meta">{loading ? '处理中…' : '准备就绪'}</div>
+              </div>
+              <div className="step-card__body">
+                <div className="options-section">
+                  <div className="options-content">
+                    {mode === 'vocal' && (
+                      <div className="option-item">
+                        <label className="option-label">模型选择</label>
+                        <Select value={modelName} onChange={setModelName} className="option-select" disabled={loading}>
+                          <Option value="Roformer (model_bs_roformer_ep_317_sdr_12.9755)">
+                            Roformer (model_bs_roformer_ep_317_sdr_12.9755)
+                          </Option>
+                          <Option value="UVR-MDX">UVR-MDX</Option>
+                          <Option value="UVR-Karaoke">UVR-Karaoke</Option>
+                        </Select>
                       </div>
                     )}
-                    <Button
-                      type="primary"
-                      icon={<DownloadOutlined />}
-                      onClick={() => handleDownload(track)}
-                      className="download-btn"
-                    >
-                      下载
-                    </Button>
+                    <div className="option-item">
+                      <label className="option-label">输出格式</label>
+                      <Select value={outputFormat} onChange={(value) => setOutputFormat(value)} className="option-select" disabled={loading}>
+                        <Option value="wav">WAV</Option>
+                        <Option value="mp3">MP3</Option>
+                      </Select>
+                    </div>
                   </div>
-                </Card>
-              ))}
+                </div>
+
+                <div className="step-card__footer step-footer-split">
+                  <Button onClick={() => setStep(2)}>上一步</Button>
+                  <Button
+                    type="primary"
+                    onClick={handleStartSeparation}
+                    disabled={!mediaDTO || !mediaDTO.id || loading}
+                    className="start-btn"
+                    loading={loading}
+                  >
+                    {loading ? '处理中...' : '开始分离'}
+                  </Button>
+                </div>
+
+                {loading && (
+                  <div className="progress-section">
+                    <div className="progress-content">
+                      <div className="progress-header">
+                        <h3 className="progress-title">处理进度</h3>
+                        <span className="progress-percent">{Math.round(progress)}%</span>
+                      </div>
+                      <Progress
+                        percent={progress}
+                        status="active"
+                        strokeColor={{
+                          '0%': '#00d4ff',
+                          '100%': '#0099cc',
+                        }}
+                        className="progress-bar"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {tracks.length > 0 && (
+                  <div className="results-section">
+                    <h3 className="results-title">分离结果</h3>
+                    <div className="results-grid">
+                      {tracks.map((track, index) => (
+                        <div key={index} className="card-base result-card">
+                          <div className="result-card-header">
+                            <h4 className="result-card-title">{track.name}</h4>
+                            {track.description && <p className="result-card-desc">{track.description}</p>}
+                          </div>
+                          <div className="result-card-content">
+                            {track.url ? (
+                              <AudioPlayer url={track.url} fileName={track.name} />
+                            ) : (
+                              <div className="audio-placeholder">
+                                <p className="placeholder-text">音频文件暂未生成</p>
+                              </div>
+                            )}
+                            <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleDownload(track)} className="download-btn">
+                              下载
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          </main>
+
+          <aside className="service-right">
+            <div className="card-base side-card">
+              <div className="side-card__title">下一步可以做什么？</div>
+              <div className="side-card__list">
+                <div className="side-card__item">
+                  <div className="side-card__item-title">AI 翻唱</div>
+                  <Tag className="side-tag">敬请期待</Tag>
+                </div>
+                <div className="side-card__item">
+                  <div className="side-card__item-title">封面生成</div>
+                  <Tag className="side-tag">规划中</Tag>
+                </div>
+                <div className="side-card__item">
+                  <div className="side-card__item-title">图 + 音乐短视频</div>
+                  <Tag className="side-tag">规划中</Tag>
+                </div>
+              </div>
+            </div>
+
+            <div className="card-base side-card">
+              <div className="side-card__title">帮助 / 文档</div>
+              <div className="side-card__list">
+                <button className="side-link" type="button" onClick={() => appMessage.info('教程页面待接入')}>
+                  使用教程
+                </button>
+                <button className="side-link" type="button" onClick={() => appMessage.info('模型说明待接入')}>
+                  模型与限制说明
+                </button>
+                <button className="side-link" type="button" onClick={() => appMessage.info('FAQ 待接入')}>
+                  常见问题 FAQ
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     </MainLayout>
   );
