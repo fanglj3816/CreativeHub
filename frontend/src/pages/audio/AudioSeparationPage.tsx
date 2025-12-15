@@ -63,11 +63,11 @@ const AudioSeparationPage: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const ref =
-      step === 1 ? step1Ref : step === 2 ? step2Ref : step3Ref;
-    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [step]);
+  // useEffect(() => {
+  //   const ref =
+  //     step === 1 ? step1Ref : step === 2 ? step2Ref : step3Ref;
+  //   ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }, [step]);
 
   // 格式化文件大小
   const formatFileSize = (bytes: number): string => {

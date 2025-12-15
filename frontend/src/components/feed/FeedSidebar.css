@@ -11,8 +11,8 @@
   position: sticky;
   top: 16px;
   /* 与 Feed 三列布局左列一致 */
-  width: 232px;
-  max-width: 232px;
+  width: 210px;
+  max-width: 210px;
   margin-right: auto;
 }
 
@@ -28,17 +28,18 @@
 .feed-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* 更接近目标站的紧凑间距 */
+  gap: 8px; /* 再收紧一点 */
 }
 
 .feed-sidebar-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 12px;
-  min-height: 60px; /* 比之前更小 */
-  border-radius: 12px; /* 更方正一点 */
+  gap: 13px; /* 图标与文字距离稍缩小 */
+  padding: 10px 12px; /* 保持按钮本身尺寸，内部内容缩小 */
+  min-height: 60px;
+  height: 60px;
+  border-radius: 5px; /* 恢复按钮尺寸但内容更紧凑 */
   background: transparent; /* 默认无背景 */
   border: none; /* 默认无边框 */
   color: var(--text-secondary);
@@ -51,17 +52,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px; /* 图标边角更方 */
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  width: 38px;
+  height: 38px;
+  border-radius: 5px; /* 更方形 */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
   flex-shrink: 0;
 }
 
 .feed-sidebar-item .item-icon :is(svg, span) {
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .feed-sidebar-item:hover {
@@ -81,8 +82,8 @@
 }
 
 .feed-sidebar-item .item-label {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 550;
   color: var(--text-primary);
 }
 

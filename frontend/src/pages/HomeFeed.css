@@ -21,8 +21,9 @@
 .feed-grid {
   display: grid;
   /* 右侧列宽保持不变；中间列自适应变宽，减少左/中间的“空白感” */
-  grid-template-columns: 232px minmax(0, 1fr) 320px;
-  gap: var(--spacing-lg);
+  /* 中间列限定最大宽度到约 730px */
+  grid-template-columns: 210px minmax(0, 730px) 320px;
+  gap: 30px; /* 左中右间距约 30px */
   width: 100%;
   max-width: 100%;
   align-items: flex-start;
@@ -314,8 +315,9 @@
 
 @media (max-width: 1280px) {
   .feed-grid {
-    grid-template-columns: 220px minmax(0, 1fr) 300px;
-    gap: var(--spacing-md);
+    /* 缩小时，中间列上限约 700px */
+    grid-template-columns: 210px minmax(0, 700px) 300px;
+    gap: 24px;
     margin-top: 0; /* 确保响应式下也不往下挪 */
   }
 }

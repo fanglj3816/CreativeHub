@@ -13,8 +13,12 @@
 }
 
 .service-page {
-  padding-top: calc(80px + var(--spacing-lg));
-  padding-bottom: var(--spacing-xl);
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 0 var(--spacing-lg);
+  padding-top: calc(80px + var(--spacing-md)); /* 为固定导航栏留出空间（更接近目标站的间隙） */
+  box-sizing: border-box;
 }
 
 /* 关键布局：左(工具导航)/中(步骤)/右(推荐&帮助&最近处理) */
