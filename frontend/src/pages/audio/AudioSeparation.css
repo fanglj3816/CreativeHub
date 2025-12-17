@@ -47,36 +47,83 @@
 
 .service-header {
   padding-bottom: var(--spacing-lg);
-  border-bottom: 1px solid var(--border-color);
   margin-bottom: var(--spacing-lg);
 }
 
-.wizard-steps-card {
-  padding: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+.service-subtitle {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.service-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin-top: var(--spacing-md);
+  margin-bottom: 0;
 }
 
 .wizard-steps {
-  margin: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 10px 0 14px;
 }
 
-.wizard-steps :global(.ant-steps-item-title),
-.wizard-steps :global(.ant-steps-item-description) {
+.wizard-steps :global(.ant-steps-item-title) {
   color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
 }
 
-.wizard-steps :global(.ant-steps-item-process .ant-steps-item-title),
-.wizard-steps :global(.ant-steps-item-process .ant-steps-item-description) {
-  color: var(--text-accent);
+.wizard-steps :global(.ant-steps-item-process .ant-steps-item-title) {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.wizard-steps :global(.ant-steps-item-wait .ant-steps-item-title) {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.wizard-steps :global(.ant-steps-item-finish .ant-steps-item-title) {
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .wizard-steps :global(.ant-steps-item-icon) {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.wizard-steps :global(.ant-steps-item-process .ant-steps-item-icon) {
+  border-color: var(--text-accent);
+  background: rgba(0, 212, 255, 0.1);
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.wizard-steps :global(.ant-steps-item-wait .ant-steps-item-icon) {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.wizard-steps :global(.ant-steps-item-finish .ant-steps-item-icon) {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
 }
 
 .wizard-steps :global(.ant-steps-item-finish .ant-steps-item-icon) {
   border-color: var(--text-accent);
+  background: transparent;
 }
 
 .wizard-steps :global(.ant-steps-item-tail::after) {
@@ -266,6 +313,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
 .side-card__item {
@@ -302,12 +351,39 @@
 
 .recent-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  gap: 8px;
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recent-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.recent-item.is-done {
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.recent-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.recent-progress {
+  width: 100%;
+}
+
+.recent-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
 }
 
 .recent-name {
@@ -320,6 +396,22 @@
 
 .recent-tag {
   margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Task Drawer */
+.task-drawer :global(.ant-drawer-body) {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.task-drawer :global(.ant-drawer-header) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.task-drawer :global(.ant-drawer-title) {
+  color: var(--text-primary);
 }
 
 /* 头部样式 */
@@ -356,7 +448,7 @@
 
 /* 上传区域 */
 .upload-section {
-  padding: var(--spacing-xl);
+  padding: 0;
 }
 
 .upload-area {
@@ -370,7 +462,7 @@
 .upload-drag-area {
   border: 2px dashed var(--border-color);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-base);
@@ -398,7 +490,7 @@
 }
 
 .upload-icon {
-  font-size: 64px;
+  font-size: 48px;
   color: var(--text-accent);
 }
 
@@ -416,7 +508,7 @@
 }
 
 .uploaded-file-info {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   background: rgba(0, 212, 255, 0.05);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
@@ -501,7 +593,7 @@
 
 /* 模式选择区域 */
 .mode-section {
-  padding: var(--spacing-xl);
+  padding: 0;
 }
 
 .section-title {
@@ -574,7 +666,7 @@
 
 /* 高级选项 */
 .options-section {
-  padding: var(--spacing-lg);
+  padding: 0;
 }
 
 .options-header {
