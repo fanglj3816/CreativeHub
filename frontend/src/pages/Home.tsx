@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Spin, App, Badge } from 'antd';
 import {
@@ -28,19 +28,26 @@ const Home: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
+    console.log('Home 组件挂载，开始加载 Feed 数据');
     loadFeed();
   }, []);
 
   const loadFeed = async () => {
     try {
       setLoading(true);
+
       const response = await getFeed(1, 10);
+      console.log('Feed 响应:', response);
+
       if (response.code === 0 && response.data) {
-        setPosts(response.data.items || []);
+        const items = response.data.items || [];
+        console.log('Feed 数据项数量:', items.length);
+        setPosts(items);
       } else {
+        console.warn('Feed 响应非成功状态:', response);
         message.warning(response.message || '加载动态失败');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('加载 Feed 失败:', error);
       message.error('加载动态失败，请稍后重试');
       setPosts([]);
@@ -195,7 +202,14 @@ const Home: React.FC = () => {
                   </div>
                 )}
 
+                {!loading && filteredPosts.length === 0 && (
+                  <div className="feed-empty">
+                    <p>暂无动态内容</p>
+                  </div>
+                )}
+
                 {!loading &&
+                  filteredPosts.length > 0 &&
                   filteredPosts.map((post) => {
                     const feedCardData = formatPostForFeedCard(post);
                     return <FeedCard key={post.id} {...feedCardData} />;
