@@ -38,7 +38,7 @@ public class UserAccount {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
     private UserProfile userProfile;
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -152,18 +152,3 @@ public class UserAccount {
         this.addresses = addresses;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

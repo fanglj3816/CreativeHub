@@ -40,3 +40,11 @@ server:
 jwt:
   secret: ${JWT_SECRET:creativehub-secret-key-change-in-production}
   expiration: 7200000  # 2小时，单位：毫秒
+
+qweather:
+  host: mx5n8mj7jr.re.qweatherapi.com   # 你控制台里的 API Host（不带 https 也行）
+  lang: zh
+  unit: m
+
+  # 方式A：API KEY（最省事）
+  apiKey: "d16b2280b0f740a7a9751847deb0db58"

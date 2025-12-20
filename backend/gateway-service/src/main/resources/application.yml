@@ -32,6 +32,13 @@ spring:
         max-connections: 1000
       routes:
         # Auth Service 路由
+        - id: auth-service-side
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/side/**
+          filters:
+            - StripPrefix=2   # /api/auth/side/panel -> /side/panel
+
         - id: auth-service
           uri: lb://auth-service
           predicates:
