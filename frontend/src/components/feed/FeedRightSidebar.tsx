@@ -1,4 +1,5 @@
 import React from 'react';
+import SidePanelCard from '../sidepanel/SidePanelCard';
 import './FeedRightSidebar.css';
 
 interface RecommendUser {
@@ -22,6 +23,7 @@ const FeedRightSidebar: React.FC<FeedRightSidebarProps> = ({ users }) => {
 
   return (
     <aside className="feed-right">
+      <SidePanelCard />
       <div className="right-card card-base">
         <div className="right-card-header">
           <div>

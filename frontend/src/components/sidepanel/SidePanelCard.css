@@ -1,0 +1,214 @@
+@import '../../styles/theme.css';
+
+.side-panel-card {
+  padding: var(--spacing-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all var(--transition-base);
+  margin-bottom: var(--spacing-md);
+}
+
+.side-panel-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.side-panel-section {
+  margin-bottom: var(--spacing-md);
+}
+
+.side-panel-section:last-child {
+  margin-bottom: 0;
+}
+
+/* 用户信息区块 */
+.side-panel-user {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.side-panel-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-accent);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.side-panel-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.side-panel-username {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.side-panel-city {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* 天气区块 */
+.side-panel-weather {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.side-panel-weather-main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.side-panel-weather-main i {
+  font-size: 32px;
+  color: var(--text-accent);
+  line-height: 1;
+}
+
+.side-panel-weather-temp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.side-panel-temp-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.side-panel-temp-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.side-panel-weather-detail {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-xs);
+}
+
+/* 黄历区块 */
+.side-panel-almanac {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.side-panel-almanac-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.side-panel-almanac-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.side-panel-almanac-lunar {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.side-panel-almanac-items {
+  margin-top: var(--spacing-sm);
+}
+
+.side-panel-almanac-items:first-of-type {
+  margin-top: 0;
+}
+
+.side-panel-almanac-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.side-panel-almanac-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.side-panel-tag {
+  margin: 0 !important;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.side-panel-tag-yi {
+  color: rgba(76, 175, 80, 0.9);
+  border-color: rgba(76, 175, 80, 0.2);
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.side-panel-tag-ji {
+  color: rgba(244, 67, 54, 0.9);
+  border-color: rgba(244, 67, 54, 0.2);
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.side-panel-tag-more {
+  color: var(--text-tertiary);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* 名言区块 */
+.side-panel-quote {
+  padding-top: var(--spacing-sm);
+}
+
+.side-panel-quote-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* 错误状态 */
+.side-panel-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  text-align: center;
+  gap: var(--spacing-sm);
+}
+
+.side-panel-error-text {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.side-panel-login-btn {
+  margin-top: var(--spacing-xs);
+}

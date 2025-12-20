@@ -24,6 +24,8 @@ import {
   type TaskStatusResponse,
 } from '../../api/audio';
 import { uploadMedia, type MediaDTO } from '../../api/media';
+import SidePanelCard from '../../components/sidepanel/SidePanelCard';
+import '../../components/sidepanel/SidePanelCard.css';
 import './AudioSeparation.css';
 import '../HomeFeed.css';
 
@@ -840,6 +842,7 @@ const AudioSeparationPage: React.FC = () => {
           </main>
 
           <aside className="service-right">
+            <SidePanelCard />
             <div className="card-base side-card">
               <div className="side-card__title">下一步可以做什么？</div>
               <div className="side-card__list">
