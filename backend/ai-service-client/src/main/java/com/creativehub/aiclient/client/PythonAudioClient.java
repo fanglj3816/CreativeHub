@@ -197,7 +197,7 @@ public class PythonAudioClient {
      */
     public VocalSeparationResult separateVocal(Long taskId, String audioUrl, String fileName) {
         log.info("Calling Python service for vocal separation: taskId={}, url={}", taskId, audioUrl);
-        
+
         try {
             // 1. 构建请求体
             SeparationRequest request = new SeparationRequest(
@@ -205,11 +205,11 @@ public class PythonAudioClient {
                 audioUrl,
                 fileName
             );
-            
+
             // 2. 调用 Python 接口
             String url = pythonServiceBaseUrl + "/internal/separation/vocal";
             SeparationResponse response = callPythonService(url, request);
-            
+
             // 3. 转换响应
             return new VocalSeparationResult(
                 response.getVocalUrl(),
@@ -231,30 +231,34 @@ public class PythonAudioClient {
      */
     public StemSeparationResult separateStem4(Long taskId, String audioUrl, String fileName) {
         log.info("Calling Python service for 4-track separation: taskId={}, url={}", taskId, audioUrl);
-        
+
         try {
             SeparationRequest request = new SeparationRequest(
                 taskId != null ? taskId.intValue() : null,
                 audioUrl,
                 fileName
             );
-            
+
             String url = pythonServiceBaseUrl + "/internal/separation/demucs4";
-            SeparationResponse response = callPythonService(url, request);
-            
-            // 提取所有轨道的 URL
-            List<String> trackUrls = new ArrayList<>();
-            if (response.getResults() != null) {
-                for (StemResult result : response.getResults()) {
-                    trackUrls.add(result.getUrl());
-                }
-            }
-            
-            return new StemSeparationResult(trackUrls);
+            return getResult(url, request);
         } catch (Exception e) {
             log.error("Failed to call Python 4-track separation service: taskId={}, url={}", taskId, audioUrl, e);
             throw new RuntimeException("调用 Python 4轨分离服务失败: " + e.getMessage(), e);
         }
+    }
+
+    private StemSeparationResult getResult(String url, SeparationRequest request) {
+        SeparationResponse response = callPythonService(url, request);
+
+        // 提取所有轨道的 URL
+        List<String> trackUrls = new ArrayList<>();
+        if (response.getResults() != null) {
+            for (StemResult result : response.getResults()) {
+                trackUrls.add(result.getUrl());
+            }
+        }
+
+        return new StemSeparationResult(trackUrls);
     }
 
     /**
@@ -267,26 +271,16 @@ public class PythonAudioClient {
      */
     public StemSeparationResult separateStem6(Long taskId, String audioUrl, String fileName) {
         log.info("Calling Python service for 6-track separation: taskId={}, url={}", taskId, audioUrl);
-        
+
         try {
             SeparationRequest request = new SeparationRequest(
                 taskId != null ? taskId.intValue() : null,
                 audioUrl,
                 fileName
             );
-            
+
             String url = pythonServiceBaseUrl + "/internal/separation/demucs6";
-            SeparationResponse response = callPythonService(url, request);
-            
-            // 提取所有轨道的 URL
-            List<String> trackUrls = new ArrayList<>();
-            if (response.getResults() != null) {
-                for (StemResult result : response.getResults()) {
-                    trackUrls.add(result.getUrl());
-                }
-            }
-            
-            return new StemSeparationResult(trackUrls);
+            return getResult(url, request);
         } catch (Exception e) {
             log.error("Failed to call Python 6-track separation service: taskId={}, url={}", taskId, audioUrl, e);
             throw new RuntimeException("调用 Python 6轨分离服务失败: " + e.getMessage(), e);
@@ -300,21 +294,21 @@ public class PythonAudioClient {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            
+
             HttpEntity<SeparationRequest> requestEntity = new HttpEntity<>(request, headers);
-            
+
             ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 requestEntity,
                 String.class
             );
-            
+
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 // 解析 JSON 响应
                 JsonNode jsonNode = objectMapper.readTree(response.getBody());
                 SeparationResponse separationResponse = new SeparationResponse();
-                
+
                 if (jsonNode.has("taskId") && !jsonNode.get("taskId").isNull()) {
                     separationResponse.setTaskId(jsonNode.get("taskId").asInt());
                 }
@@ -327,7 +321,7 @@ public class PythonAudioClient {
                 if (jsonNode.has("instUrl") && !jsonNode.get("instUrl").isNull()) {
                     separationResponse.setInstUrl(jsonNode.get("instUrl").asText());
                 }
-                
+
                 // 解析 results 数组
                 if (jsonNode.has("results") && jsonNode.get("results").isArray()) {
                     List<StemResult> results = new ArrayList<>();
@@ -343,12 +337,12 @@ public class PythonAudioClient {
                     }
                     separationResponse.setResults(results);
                 }
-                
-                log.info("Python service response: taskId={}, jobId={}, resultsCount={}", 
-                    separationResponse.getTaskId(), 
+
+                log.info("Python service response: taskId={}, jobId={}, resultsCount={}",
+                    separationResponse.getTaskId(),
                     separationResponse.getJobId(),
                     separationResponse.getResults() != null ? separationResponse.getResults().size() : 0);
-                
+
                 return separationResponse;
             } else {
                 throw new RuntimeException("Python service returned non-2xx status: " + response.getStatusCode());
