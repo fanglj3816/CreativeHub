@@ -270,4 +270,3 @@ const SidePanelCard: React.FC = () => {
 };
 
 export default SidePanelCard;
-
