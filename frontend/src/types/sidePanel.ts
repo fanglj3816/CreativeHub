@@ -41,3 +41,4 @@ export interface SidePanelDTO {
   almanac: AlmanacDTO | null;
   quote: string | null;
 }
+

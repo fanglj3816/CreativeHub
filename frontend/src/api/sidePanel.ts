@@ -19,3 +19,4 @@ export async function fetchSidePanel(): Promise<SidePanelDTO> {
     throw error;
   }
 }
+
